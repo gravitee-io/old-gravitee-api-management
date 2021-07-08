@@ -60,10 +60,8 @@ public class UserCriteria {
         this.referenceType = referenceType;
     }
 
-
-
-
     public static class Builder {
+
         private UserStatus[] statuses;
         private boolean noStatus;
         private String referenceId;

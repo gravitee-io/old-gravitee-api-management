@@ -15,14 +15,6 @@
  */
 package io.gravitee.repository.config.mock;
 
-import io.gravitee.repository.management.api.PageRepository;
-import io.gravitee.repository.management.model.Page;
-import io.gravitee.repository.management.model.PageReferenceType;
-import io.gravitee.repository.management.model.PageSource;
-
-import java.util.*;
-import java.util.stream.IntStream;
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Optional.empty;
@@ -30,6 +22,13 @@ import static java.util.Optional.of;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import io.gravitee.repository.management.api.PageRepository;
+import io.gravitee.repository.management.model.Page;
+import io.gravitee.repository.management.model.PageReferenceType;
+import io.gravitee.repository.management.model.PageSource;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -81,10 +80,11 @@ public class PageRepositoryMock extends AbstractRepositoryMock<PageRepository> {
         when(findApiPage.getUpdatedAt()).thenReturn(new Date(1486771200000L));
 
         // shouldFindApiPageByApiId
-        when(pageRepository.search(argThat(o -> o == null || o.getReferenceId().equals("my-api")&& o.getReferenceType().equals("API")))).thenReturn(singletonList(findApiPage));
+        when(pageRepository.search(argThat(o -> o == null || o.getReferenceId().equals("my-api") && o.getReferenceType().equals("API"))))
+            .thenReturn(singletonList(findApiPage));
         List<Page> elevenPages = new ArrayList<>();
         IntStream.range(0, 11).forEach(__ -> elevenPages.add(findApiPage));
-        when(pageRepository.search(argThat(o -> o != null && o.getReferenceId() == null ))).thenReturn(elevenPages);
+        when(pageRepository.search(argThat(o -> o != null && o.getReferenceId() == null))).thenReturn(elevenPages);
 
         // shouldFindApiPageById
         when(pageRepository.findById("FindApiPage")).thenReturn(of(findApiPage));
@@ -138,7 +138,6 @@ public class PageRepositoryMock extends AbstractRepositoryMock<PageRepository> {
         when(createPortalPageFolder.isHomepage()).thenReturn(false);
         when(createPortalPageFolder.getParentId()).thenReturn("");
         when(pageRepository.findById("new-portal-page-folder")).thenReturn(empty(), of(createPortalPageFolder));
-
 
         // shouldDelete
         when(pageRepository.findById("page-to-be-deleted")).thenReturn(of(mock(Page.class)), empty());
@@ -205,17 +204,68 @@ public class PageRepositoryMock extends AbstractRepositoryMock<PageRepository> {
         //Find api pages
         final Page homepage = mock(Page.class);
         when(homepage.getId()).thenReturn("home");
-        when(pageRepository.search(argThat(o -> o == null || "my-api-2".equals(o.getReferenceId()) && "API".equals(o.getReferenceType()) && o.getHomepage().equals(Boolean.TRUE)))).thenReturn(singletonList(homepage));
-        when(pageRepository.search(argThat(o -> o == null || "my-api-2".equals(o.getReferenceId()) && "API".equals(o.getReferenceType()) && o.getHomepage().equals(Boolean.FALSE)))).thenReturn(asList(mock(Page.class), mock(Page.class)));
+        when(
+            pageRepository.search(
+                argThat(
+                    o ->
+                        o == null ||
+                        "my-api-2".equals(o.getReferenceId()) &&
+                        "API".equals(o.getReferenceType()) &&
+                        o.getHomepage().equals(Boolean.TRUE)
+                )
+            )
+        )
+            .thenReturn(singletonList(homepage));
+        when(
+            pageRepository.search(
+                argThat(
+                    o ->
+                        o == null ||
+                        "my-api-2".equals(o.getReferenceId()) &&
+                        "API".equals(o.getReferenceType()) &&
+                        o.getHomepage().equals(Boolean.FALSE)
+                )
+            )
+        )
+            .thenReturn(asList(mock(Page.class), mock(Page.class)));
 
         //Find portal pages
         final Page portalHomepage = mock(Page.class);
         when(portalHomepage.getId()).thenReturn("FindPortalPage-homepage");
         final Page portalNotHomepage = mock(Page.class);
         when(portalNotHomepage.getId()).thenReturn("FindPortalPage-nothomepage");
-        when(pageRepository.search(argThat(o -> o == null || "DEFAULT".equals(o.getReferenceId())  && "ENVIRONMENT".equals(o.getReferenceType())))).thenReturn(asList(portalHomepage, portalNotHomepage));
-        when(pageRepository.search(argThat(o -> o == null || "DEFAULT".equals(o.getReferenceId()) && "ENVIRONMENT".equals(o.getReferenceType()) && o.getHomepage() != null && o.getHomepage().equals(Boolean.TRUE)))).thenReturn(singletonList(portalHomepage));
-        when(pageRepository.search(argThat(o -> o == null || "DEFAULT".equals(o.getReferenceId()) && "ENVIRONMENT".equals(o.getReferenceType()) && o.getHomepage() != null && o.getHomepage().equals(Boolean.FALSE)))).thenReturn(singletonList(portalNotHomepage));
+        when(
+            pageRepository.search(
+                argThat(o -> o == null || "DEFAULT".equals(o.getReferenceId()) && "ENVIRONMENT".equals(o.getReferenceType()))
+            )
+        )
+            .thenReturn(asList(portalHomepage, portalNotHomepage));
+        when(
+            pageRepository.search(
+                argThat(
+                    o ->
+                        o == null ||
+                        "DEFAULT".equals(o.getReferenceId()) &&
+                        "ENVIRONMENT".equals(o.getReferenceType()) &&
+                        o.getHomepage() != null &&
+                        o.getHomepage().equals(Boolean.TRUE)
+                )
+            )
+        )
+            .thenReturn(singletonList(portalHomepage));
+        when(
+            pageRepository.search(
+                argThat(
+                    o ->
+                        o == null ||
+                        "DEFAULT".equals(o.getReferenceId()) &&
+                        "ENVIRONMENT".equals(o.getReferenceType()) &&
+                        o.getHomepage() != null &&
+                        o.getHomepage().equals(Boolean.FALSE)
+                )
+            )
+        )
+            .thenReturn(singletonList(portalNotHomepage));
 
         // Find max api page order
         when(pageRepository.findMaxPageReferenceIdAndReferenceTypeOrder("my-api-2", PageReferenceType.API)).thenReturn(2);

@@ -15,22 +15,21 @@
  */
 package io.gravitee.repository;
 
+import static io.gravitee.repository.utils.DateUtils.compareDate;
+import static java.util.Collections.singleton;
+import static org.junit.Assert.*;
+
 import io.gravitee.common.data.domain.Page;
 import io.gravitee.repository.config.AbstractRepositoryTest;
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.management.api.search.SubscriptionCriteria;
 import io.gravitee.repository.management.api.search.builder.PageableBuilder;
 import io.gravitee.repository.management.model.Subscription;
-import org.junit.Test;
-
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-
-import static io.gravitee.repository.utils.DateUtils.compareDate;
-import static java.util.Collections.singleton;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * @author Nicolas GERAUD (nicolas.geraud at graviteesource.com)
@@ -45,10 +44,8 @@ public class SubscriptionRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindByPlan() throws TechnicalException {
-        List<Subscription> subscriptions = this.subscriptionRepository.search(
-                new SubscriptionCriteria.Builder()
-                        .plans(singleton("plan1"))
-                .build());
+        List<Subscription> subscriptions =
+            this.subscriptionRepository.search(new SubscriptionCriteria.Builder().plans(singleton("plan1")).build());
 
         assertNotNull(subscriptions);
         assertFalse(subscriptions.isEmpty());
@@ -74,10 +71,8 @@ public class SubscriptionRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldNotFindByPlan() throws TechnicalException {
-        List<Subscription> subscriptions = this.subscriptionRepository.search(
-                new SubscriptionCriteria.Builder()
-                        .plans(singleton("unknown-plan"))
-                        .build());
+        List<Subscription> subscriptions =
+            this.subscriptionRepository.search(new SubscriptionCriteria.Builder().plans(singleton("unknown-plan")).build());
 
         assertNotNull(subscriptions);
         assertTrue(subscriptions.isEmpty());
@@ -85,10 +80,8 @@ public class SubscriptionRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindByApplication() throws TechnicalException {
-        List<Subscription> subscriptions = this.subscriptionRepository.search(
-                new SubscriptionCriteria.Builder()
-                        .applications(singleton("app1"))
-                        .build());
+        List<Subscription> subscriptions =
+            this.subscriptionRepository.search(new SubscriptionCriteria.Builder().applications(singleton("app1")).build());
 
         assertNotNull(subscriptions);
         assertFalse(subscriptions.isEmpty());
@@ -101,10 +94,8 @@ public class SubscriptionRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shoulNotFindByApplication() throws TechnicalException {
-        List<Subscription> subscriptions = this.subscriptionRepository.search(
-                new SubscriptionCriteria.Builder()
-                        .applications(singleton("unknown-app"))
-                        .build());
+        List<Subscription> subscriptions =
+            this.subscriptionRepository.search(new SubscriptionCriteria.Builder().applications(singleton("unknown-app")).build());
 
         assertNotNull(subscriptions);
         assertTrue(subscriptions.isEmpty());
@@ -177,11 +168,8 @@ public class SubscriptionRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindBetweenDates() throws TechnicalException {
-        List<Subscription> subscriptions = this.subscriptionRepository.search(
-                new SubscriptionCriteria.Builder()
-                        .from(1469022010883L)
-                        .to(1569022010883L)
-                        .build());
+        List<Subscription> subscriptions =
+            this.subscriptionRepository.search(new SubscriptionCriteria.Builder().from(1469022010883L).to(1569022010883L).build());
 
         assertNotNull(subscriptions);
         assertFalse(subscriptions.isEmpty());
@@ -191,11 +179,10 @@ public class SubscriptionRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindBetweenDatesPageable() throws Exception {
-        Page<Subscription> subscriptionPage = subscriptionRepository.search(new SubscriptionCriteria.Builder()
-                .from(1339022010883L)
-                .to(1839022010883L)
-                .build(),
-                new PageableBuilder().pageNumber(0).pageSize(2).build());
+        Page<Subscription> subscriptionPage = subscriptionRepository.search(
+            new SubscriptionCriteria.Builder().from(1339022010883L).to(1839022010883L).build(),
+            new PageableBuilder().pageNumber(0).pageSize(2).build()
+        );
 
         assertEquals(0, subscriptionPage.getPageNumber());
         assertEquals(2, subscriptionPage.getPageElements());
@@ -205,11 +192,11 @@ public class SubscriptionRepositoryTest extends AbstractRepositoryTest {
         assertEquals("sub3", subscriptionPage.getContent().get(0).getId());
         assertEquals("sub1", subscriptionPage.getContent().get(1).getId());
 
-        subscriptionPage = subscriptionRepository.search(new SubscriptionCriteria.Builder()
-                        .from(1339022010883L)
-                        .to(1839022010883L)
-                        .build(),
-                new PageableBuilder().pageNumber(1).pageSize(2).build());
+        subscriptionPage =
+            subscriptionRepository.search(
+                new SubscriptionCriteria.Builder().from(1339022010883L).to(1839022010883L).build(),
+                new PageableBuilder().pageNumber(1).pageSize(2).build()
+            );
 
         assertEquals(1, subscriptionPage.getPageNumber());
         assertEquals(0, subscriptionPage.getPageElements());

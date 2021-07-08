@@ -15,20 +15,19 @@
  */
 package io.gravitee.repository;
 
+import static org.junit.Assert.*;
+
 import io.gravitee.repository.config.AbstractRepositoryTest;
 import io.gravitee.repository.media.model.Media;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
-
-import javax.xml.bind.DatatypeConverter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.List;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
+import javax.xml.bind.DatatypeConverter;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 
 /**
  * @author Guillaume GILLON
@@ -42,7 +41,6 @@ public class MediaRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldCreate() throws Exception {
-
         File file = new File(MediaRepositoryTest.class.getResource(getTestCasesPath() + "gravitee_logo_anim.gif").toURI());
         InputStream fileInputStream = new FileInputStream(file);
 
@@ -76,7 +74,6 @@ public class MediaRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldCreateForAPI() throws Exception {
-
         File file = new File(MediaRepositoryTest.class.getResource(getTestCasesPath() + "stars.png").toURI());
         InputStream fileInputStream = new FileInputStream(file);
 
@@ -110,7 +107,6 @@ public class MediaRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindAllForAnAPI() throws Exception {
-
         File file = new File(MediaRepositoryTest.class.getResource(getTestCasesPath() + "stars.png").toURI());
         InputStream fileInputStream = new FileInputStream(file);
         MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -157,7 +153,6 @@ public class MediaRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldDeleteAllForAnAPI() throws Exception {
-
         File file = new File(MediaRepositoryTest.class.getResource(getTestCasesPath() + "stars.png").toURI());
         InputStream fileInputStream = new FileInputStream(file);
         MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -189,6 +184,4 @@ public class MediaRepositoryTest extends AbstractRepositoryTest {
         Optional<Media> image = mediaRepository.findByHash(hashString, "image");
         assertFalse("Invalid asset found", image.isPresent());
     }
-
-
 }

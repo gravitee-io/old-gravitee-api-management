@@ -15,11 +15,10 @@
  */
 package io.gravitee.repository.redis;
 
-import org.springframework.data.redis.connection.jedis.JedisConnection;
-
 import io.gravitee.repository.Repository;
 import io.gravitee.repository.Scope;
 import io.gravitee.repository.redis.ratelimit.RateLimitRepositoryConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnection;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -33,8 +32,7 @@ public class RedisRepository implements Repository {
             Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
             try {
                 Class.forName(JedisConnection.class.getName(), true, getClass().getClassLoader());
-            } catch (ClassNotFoundException e) {
-            }
+            } catch (ClassNotFoundException e) {}
         } finally {
             Thread.currentThread().setContextClassLoader(tccl);
         }
@@ -47,9 +45,7 @@ public class RedisRepository implements Repository {
 
     @Override
     public Scope[] scopes() {
-        return new Scope [] {
-                Scope.RATE_LIMIT
-        };
+        return new Scope[] { Scope.RATE_LIMIT };
     }
 
     @Override

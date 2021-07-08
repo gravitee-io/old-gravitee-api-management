@@ -15,19 +15,18 @@
  */
 package io.gravitee.repository.config.mock;
 
-import io.gravitee.repository.management.api.CategoryRepository;
-import io.gravitee.repository.management.api.CategoryRepository;
-import io.gravitee.repository.management.model.Category;
-import io.gravitee.repository.management.model.Category;
-
-import java.util.Date;
-import java.util.Set;
-
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.util.collections.Sets.newSet;
+
+import io.gravitee.repository.management.api.CategoryRepository;
+import io.gravitee.repository.management.api.CategoryRepository;
+import io.gravitee.repository.management.model.Category;
+import io.gravitee.repository.management.model.Category;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -84,7 +83,13 @@ public class CategoryRepositoryMock extends AbstractRepositoryMock<CategoryRepos
 
         final Set<Category> categories = newSet(newCategory, categoryProducts, mock(Category.class), myCategory);
         final Set<Category> categoriesAfterDelete = newSet(newCategory, categoryProducts, myCategory);
-        final Set<Category> categoriesAfterAdd = newSet(newCategory, categoryProducts, mock(Category.class), mock(Category.class), myCategory);
+        final Set<Category> categoriesAfterAdd = newSet(
+            newCategory,
+            categoryProducts,
+            mock(Category.class),
+            mock(Category.class),
+            myCategory
+        );
 
         when(categoryRepository.findAll()).thenReturn(categories, categoriesAfterAdd, categories, categoriesAfterDelete, categories);
         when(categoryRepository.findAllByEnvironment("DEFAULT")).thenReturn(categories);

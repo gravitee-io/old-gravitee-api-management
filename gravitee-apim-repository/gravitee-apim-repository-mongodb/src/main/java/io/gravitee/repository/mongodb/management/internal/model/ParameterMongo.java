@@ -15,10 +15,9 @@
  */
 package io.gravitee.repository.mongodb.management.internal.model;
 
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Objects;
 
 /**
  * @author Azize ELAMRANI (azize.elamrani at graviteesource.com)
@@ -27,18 +26,16 @@ import java.util.Objects;
 @Document(collection = "parameters")
 public class ParameterMongo {
 
-	@Id
-	private String key;
+    @Id
+    private String key;
 
     private String referenceId;
-    
+
     private String referenceType;
-    
-	private String value;
 
-	
+    private String value;
 
-	public String getKey() {
+    public String getKey() {
         return key;
     }
 
@@ -63,34 +60,43 @@ public class ParameterMongo {
     }
 
     public String getValue() {
-		return value;
-	}
+        return value;
+    }
 
-	public void setValue(String value) {
-		this.value = value;
-	}
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof ParameterMongo)) return false;
-		ParameterMongo that = (ParameterMongo) o;
-		return Objects.equals(key, that.key) &&
-				Objects.equals(value, that.value);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ParameterMongo)) return false;
+        ParameterMongo that = (ParameterMongo) o;
+        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(key, value);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, value);
+    }
 
-	@Override
-	public String toString() {
-		return "ParameterMongo{" +
-				"key='" + key + '\'' +
-                ", referenceId='" + referenceId + '\'' +
-                ", referenceType='" + referenceType + '\'' +
-				", value='" + value + '\'' +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return (
+            "ParameterMongo{" +
+            "key='" +
+            key +
+            '\'' +
+            ", referenceId='" +
+            referenceId +
+            '\'' +
+            ", referenceType='" +
+            referenceType +
+            '\'' +
+            ", value='" +
+            value +
+            '\'' +
+            '}'
+        );
+    }
 }

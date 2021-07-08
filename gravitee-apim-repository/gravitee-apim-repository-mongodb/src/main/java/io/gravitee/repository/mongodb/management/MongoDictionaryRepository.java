@@ -25,14 +25,13 @@ import io.gravitee.repository.mongodb.management.internal.model.DictionaryMongo;
 import io.gravitee.repository.mongodb.management.internal.model.DictionaryProviderMongo;
 import io.gravitee.repository.mongodb.management.internal.model.DictionaryTriggerMongo;
 import io.gravitee.repository.mongodb.management.mapper.GraviteeMapper;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -111,7 +110,6 @@ public class MongoDictionaryRepository implements DictionaryRepository {
 
             DictionaryMongo dictionaryMongoUpdated = internalDictionaryRepo.save(dictionaryMongo);
             return mapper.map(dictionaryMongoUpdated, Dictionary.class);
-
         } catch (Exception e) {
             LOGGER.error("An error occured when updating dictionary", e);
             throw new TechnicalException("An error occured when updating dictionary");

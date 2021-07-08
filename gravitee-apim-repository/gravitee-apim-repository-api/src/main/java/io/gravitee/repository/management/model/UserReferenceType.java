@@ -20,7 +20,6 @@ package io.gravitee.repository.management.model;
  * @author GraviteeSource Team
  */
 public enum UserReferenceType {
-
     ENVIRONMENT,
-    ORGANIZATION
+    ORGANIZATION,
 }

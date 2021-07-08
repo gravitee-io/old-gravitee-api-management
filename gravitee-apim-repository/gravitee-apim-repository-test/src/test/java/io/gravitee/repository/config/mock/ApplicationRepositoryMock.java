@@ -15,16 +15,6 @@
  */
 package io.gravitee.repository.config.mock;
 
-import io.gravitee.repository.management.api.ApplicationRepository;
-import io.gravitee.repository.management.model.Application;
-import io.gravitee.repository.management.model.ApplicationStatus;
-import io.gravitee.repository.management.model.ApplicationType;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import static io.gravitee.repository.utils.DateUtils.parse;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
@@ -33,6 +23,15 @@ import static java.util.Optional.of;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.internal.util.collections.Sets.newSet;
+
+import io.gravitee.repository.management.api.ApplicationRepository;
+import io.gravitee.repository.management.model.Application;
+import io.gravitee.repository.management.model.ApplicationStatus;
+import io.gravitee.repository.management.model.ApplicationType;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -57,23 +56,25 @@ public class ApplicationRepositoryMock extends AbstractRepositoryMock<Applicatio
         when(applicationRepository.findById("application-sample")).thenReturn(of(application));
 
         final Set<Application> allApplications = newSet(
-                application,
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class));
+            application,
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class)
+        );
         final Set<Application> allApplicationsForDefaultEnvironment = newSet(
-                application,
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class),
-                mock(Application.class));
-        
+            application,
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class),
+            mock(Application.class)
+        );
+
         when(applicationRepository.findAll()).thenReturn(allApplications);
         when(applicationRepository.findAllByEnvironment("DEFAULT")).thenReturn(allApplicationsForDefaultEnvironment);
 
@@ -136,12 +137,14 @@ public class ApplicationRepositoryMock extends AbstractRepositoryMock<Applicatio
         when(applicationRepository.findByName("aRcHEd")).thenReturn(newSet(searchedApp1, searchedApp2));
 
         when(applicationRepository.findByIds(asList("searched-app1", "searched-app2"))).thenReturn(newSet(searchedApp1, searchedApp2));
-        when(applicationRepository.findByGroups(singletonList("application-group"))).thenReturn(newSet(groupedApplication1, groupedApplication2));
-        when(applicationRepository.findByGroups(singletonList("application-group"), ApplicationStatus.ARCHIVED)).thenReturn(newSet(groupedApplication2));
+        when(applicationRepository.findByGroups(singletonList("application-group")))
+            .thenReturn(newSet(groupedApplication1, groupedApplication2));
+        when(applicationRepository.findByGroups(singletonList("application-group"), ApplicationStatus.ARCHIVED))
+            .thenReturn(newSet(groupedApplication2));
         when(applicationRepository.findByGroups(emptyList())).thenReturn(emptySet());
 
-        when(applicationRepository.findByIds(asList("application-sample", "updated-app", "unknown"))).
-                thenReturn(new HashSet<>(asList(application, updatedApplication)));
+        when(applicationRepository.findByIds(asList("application-sample", "updated-app", "unknown")))
+            .thenReturn(new HashSet<>(asList(application, updatedApplication)));
 
         when(applicationRepository.update(argThat(o -> o == null || o.getId().equals("unknown")))).thenThrow(new IllegalStateException());
     }

@@ -15,14 +15,6 @@
  */
 package io.gravitee.repository.mongodb.management;
 
-import java.util.List;
-import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.management.api.PageRepository;
 import io.gravitee.repository.management.api.search.PageCriteria;
@@ -33,6 +25,12 @@ import io.gravitee.repository.mongodb.management.internal.model.PageMongo;
 import io.gravitee.repository.mongodb.management.internal.model.PageSourceMongo;
 import io.gravitee.repository.mongodb.management.internal.page.PageMongoRepository;
 import io.gravitee.repository.mongodb.management.mapper.GraviteeMapper;
+import java.util.List;
+import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Titouan COMPIEGNE (titouan.compiegne at graviteesource.com)
@@ -120,9 +118,7 @@ public class MongoPageRepository implements PageRepository {
 
             PageMongo pageMongoUpdated = internalPageRepo.save(pageMongo);
             return mapper.map(pageMongoUpdated, Page.class);
-
         } catch (Exception e) {
-
             logger.error("An error occured when updating page", e);
             throw new TechnicalException("An error occured when updating page");
         }
@@ -139,15 +135,15 @@ public class MongoPageRepository implements PageRepository {
     }
 
     @Override
-    public Integer findMaxPageReferenceIdAndReferenceTypeOrder(String referenceId, PageReferenceType referenceType) throws TechnicalException {
+    public Integer findMaxPageReferenceIdAndReferenceTypeOrder(String referenceId, PageReferenceType referenceType)
+        throws TechnicalException {
         try {
             return internalPageRepo.findMaxPageReferenceIdAndReferenceTypeOrder(referenceId, referenceType.name());
         } catch (Exception e) {
-            logger.error("An error occured when searching max order page for reference [{}, {}]", referenceId,referenceType, e);
+            logger.error("An error occured when searching max order page for reference [{}, {}]", referenceId, referenceType, e);
             throw new TechnicalException("An error occured when searching max order page for reference");
         }
     }
-
 
     private PageSourceMongo convert(PageSource pageSource) {
         PageSourceMongo pageSourceMongo = new PageSourceMongo();

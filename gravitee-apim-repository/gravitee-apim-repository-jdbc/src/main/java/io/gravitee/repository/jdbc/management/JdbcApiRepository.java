@@ -15,6 +15,10 @@
  */
 package io.gravitee.repository.jdbc.management;
 
+import static java.lang.String.format;
+import static org.springframework.util.CollectionUtils.isEmpty;
+import static org.springframework.util.StringUtils.isEmpty;
+
 import io.gravitee.common.data.domain.Page;
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
@@ -23,21 +27,16 @@ import io.gravitee.repository.management.api.search.ApiCriteria;
 import io.gravitee.repository.management.api.search.ApiFieldExclusionFilter;
 import io.gravitee.repository.management.api.search.Pageable;
 import io.gravitee.repository.management.model.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Types;
+import java.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Types;
-import java.util.*;
-
-import static java.lang.String.format;
-import static org.springframework.util.CollectionUtils.isEmpty;
-import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * @author njt
@@ -52,22 +51,23 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(Api.class, "apis", "id")
-            .addColumn("id", Types.NVARCHAR, String.class)
-            .addColumn("environment_id", Types.NVARCHAR, String.class)
-            .addColumn("name", Types.NVARCHAR, String.class)
-            .addColumn("description", Types.NVARCHAR, String.class)
-            .addColumn("version", Types.NVARCHAR, String.class)
-            .addColumn("definition", Types.NVARCHAR, String.class)
-            .addColumn("deployed_at", Types.TIMESTAMP, Date.class)
-            .addColumn("created_at", Types.TIMESTAMP, Date.class)
-            .addColumn("updated_at", Types.TIMESTAMP, Date.class)
-            .addColumn("visibility", Types.NVARCHAR, Visibility.class)
-            .addColumn("lifecycle_state", Types.NVARCHAR, LifecycleState.class)
-            .addColumn("picture", Types.NVARCHAR, String.class)
-            .addColumn("api_lifecycle_state", Types.NVARCHAR, ApiLifecycleState.class)
-            .addColumn("disable_membership_notifications", Types.BIT, boolean.class)
-            .build();
+    private static final JdbcObjectMapper ORM = JdbcObjectMapper
+        .builder(Api.class, "apis", "id")
+        .addColumn("id", Types.NVARCHAR, String.class)
+        .addColumn("environment_id", Types.NVARCHAR, String.class)
+        .addColumn("name", Types.NVARCHAR, String.class)
+        .addColumn("description", Types.NVARCHAR, String.class)
+        .addColumn("version", Types.NVARCHAR, String.class)
+        .addColumn("definition", Types.NVARCHAR, String.class)
+        .addColumn("deployed_at", Types.TIMESTAMP, Date.class)
+        .addColumn("created_at", Types.TIMESTAMP, Date.class)
+        .addColumn("updated_at", Types.TIMESTAMP, Date.class)
+        .addColumn("visibility", Types.NVARCHAR, Visibility.class)
+        .addColumn("lifecycle_state", Types.NVARCHAR, LifecycleState.class)
+        .addColumn("picture", Types.NVARCHAR, String.class)
+        .addColumn("api_lifecycle_state", Types.NVARCHAR, ApiLifecycleState.class)
+        .addColumn("disable_membership_notifications", Types.BIT, boolean.class)
+        .build();
 
     private static final JdbcHelper.ChildAdder<Api> CHILD_ADDER = (Api parent, ResultSet rs) -> {
         Set<String> categories = parent.getCategories();
@@ -95,10 +95,7 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
         LOGGER.debug("JdbcApiRepository.findById({})", id);
         try {
             JdbcHelper.CollatingRowMapper<Api> rowMapper = new JdbcHelper.CollatingRowMapper<>(ORM.getRowMapper(), CHILD_ADDER, "id");
-            jdbcTemplate.query("select * from apis a left join api_categories ac on a.id = ac.api_id where a.id = ?"
-                    , rowMapper
-                    , id
-            );
+            jdbcTemplate.query("select * from apis a left join api_categories ac on a.id = ac.api_id where a.id = ?", rowMapper, id);
             Optional<Api> result = rowMapper.getRows().stream().findFirst();
             if (result.isPresent()) {
                 addLabels(result.get());
@@ -110,7 +107,6 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
             LOGGER.error("Failed to find api by id:", ex);
             throw new TechnicalException("Failed to find api by id", ex);
         }
-
     }
 
     @Override
@@ -166,8 +162,10 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
         }
         List<String> filteredLabels = ORM.filterStrings(api.getLabels());
         if (!filteredLabels.isEmpty()) {
-            jdbcTemplate.batchUpdate("insert into api_labels (api_id, label) values ( ?, ? )"
-                    , ORM.getBatchStringSetter(api.getId(), filteredLabels));
+            jdbcTemplate.batchUpdate(
+                "insert into api_labels (api_id, label) values ( ?, ? )",
+                ORM.getBatchStringSetter(api.getId(), filteredLabels)
+            );
         }
     }
 
@@ -181,8 +179,10 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
         }
         List<String> filteredGroups = ORM.filterStrings(api.getGroups());
         if (!filteredGroups.isEmpty()) {
-            jdbcTemplate.batchUpdate("insert into api_groups ( api_id, group_id ) values ( ?, ? )"
-                    , ORM.getBatchStringSetter(api.getId(), filteredGroups));
+            jdbcTemplate.batchUpdate(
+                "insert into api_groups ( api_id, group_id ) values ( ?, ? )",
+                ORM.getBatchStringSetter(api.getId(), filteredGroups)
+            );
         }
     }
 
@@ -192,8 +192,10 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
         }
         List<String> filteredCategories = ORM.filterStrings(api.getCategories());
         if (!filteredCategories.isEmpty()) {
-            jdbcTemplate.batchUpdate("insert into api_categories ( api_id, category ) values ( ?, ? )"
-                    , ORM.getBatchStringSetter(api.getId(), filteredCategories));
+            jdbcTemplate.batchUpdate(
+                "insert into api_categories ( api_id, category ) values ( ?, ? )",
+                ORM.getBatchStringSetter(api.getId(), filteredCategories)
+            );
         }
     }
 
@@ -215,11 +217,11 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
 
     private List<Api> findByCriteria(ApiCriteria apiCriteria, ApiFieldExclusionFilter apiFieldExclusionFilter) {
         LOGGER.debug("JdbcApiRepository.search({})", apiCriteria);
-        final JdbcHelper.CollatingRowMapper<Api> rowMapper =
-                new JdbcHelper.CollatingRowMapper<>(ORM.getRowMapper(), CHILD_ADDER, "id");
+        final JdbcHelper.CollatingRowMapper<Api> rowMapper = new JdbcHelper.CollatingRowMapper<>(ORM.getRowMapper(), CHILD_ADDER, "id");
 
-        String projection ="ac.*, a.id, a.environment_id, a.name, a.description, a.version, a.deployed_at, a.created_at, a.updated_at, " +
-                "a.visibility, a.lifecycle_state, a.picture, a.api_lifecycle_state";
+        String projection =
+            "ac.*, a.id, a.environment_id, a.name, a.description, a.version, a.deployed_at, a.created_at, a.updated_at, " +
+            "a.visibility, a.lifecycle_state, a.picture, a.api_lifecycle_state";
 
         if (apiFieldExclusionFilter == null || !apiFieldExclusionFilter.isDefinition()) {
             projection += ", a.definition";
@@ -273,42 +275,44 @@ public class JdbcApiRepository extends JdbcAbstractPageableRepository<Api> imple
         }
         sbQuery.append("order by a.name");
 
-        jdbcTemplate.query(sbQuery.toString(), (PreparedStatement ps) -> {
-                    int lastIndex = 1;
-                    if (apiCriteria != null) {
-                        if (!isEmpty(apiCriteria.getGroups())) {
-                            lastIndex = ORM.setArguments(ps, apiCriteria.getGroups(), lastIndex);
-                        }
-                        if (!isEmpty(apiCriteria.getIds())) {
-                            lastIndex = ORM.setArguments(ps, apiCriteria.getIds(), lastIndex);
-                        }
-                        if (!isEmpty(apiCriteria.getLabel())) {
-                            ps.setString(lastIndex++, apiCriteria.getLabel());
-                        }
-                        if (!isEmpty(apiCriteria.getName())) {
-                            ps.setString(lastIndex++, apiCriteria.getName());
-                        }
-                        if (!isEmpty(apiCriteria.getState())) {
-                            ps.setString(lastIndex++, apiCriteria.getState().name());
-                        }
-                        if (!isEmpty(apiCriteria.getVersion())) {
-                            ps.setString(lastIndex++, apiCriteria.getVersion());
-                        }
-                        if (!isEmpty(apiCriteria.getCategory())) {
-                            ps.setString(lastIndex++, apiCriteria.getCategory());
-                        }
-                        if (!isEmpty(apiCriteria.getVisibility())) {
-                            ps.setString(lastIndex++, apiCriteria.getVisibility().name());
-                        }
-                        if (!isEmpty(apiCriteria.getLifecycleStates())) {
-                            ORM.setArguments(ps, apiCriteria.getLifecycleStates(), lastIndex++);
-                        }
-                        if (!isEmpty(apiCriteria.getEnvironmentId())) {
-                            ps.setString(lastIndex++, apiCriteria.getEnvironmentId());
-                        }
+        jdbcTemplate.query(
+            sbQuery.toString(),
+            (PreparedStatement ps) -> {
+                int lastIndex = 1;
+                if (apiCriteria != null) {
+                    if (!isEmpty(apiCriteria.getGroups())) {
+                        lastIndex = ORM.setArguments(ps, apiCriteria.getGroups(), lastIndex);
+                    }
+                    if (!isEmpty(apiCriteria.getIds())) {
+                        lastIndex = ORM.setArguments(ps, apiCriteria.getIds(), lastIndex);
+                    }
+                    if (!isEmpty(apiCriteria.getLabel())) {
+                        ps.setString(lastIndex++, apiCriteria.getLabel());
+                    }
+                    if (!isEmpty(apiCriteria.getName())) {
+                        ps.setString(lastIndex++, apiCriteria.getName());
+                    }
+                    if (!isEmpty(apiCriteria.getState())) {
+                        ps.setString(lastIndex++, apiCriteria.getState().name());
+                    }
+                    if (!isEmpty(apiCriteria.getVersion())) {
+                        ps.setString(lastIndex++, apiCriteria.getVersion());
+                    }
+                    if (!isEmpty(apiCriteria.getCategory())) {
+                        ps.setString(lastIndex++, apiCriteria.getCategory());
+                    }
+                    if (!isEmpty(apiCriteria.getVisibility())) {
+                        ps.setString(lastIndex++, apiCriteria.getVisibility().name());
+                    }
+                    if (!isEmpty(apiCriteria.getLifecycleStates())) {
+                        ORM.setArguments(ps, apiCriteria.getLifecycleStates(), lastIndex++);
+                    }
+                    if (!isEmpty(apiCriteria.getEnvironmentId())) {
+                        ps.setString(lastIndex++, apiCriteria.getEnvironmentId());
                     }
                 }
-                , rowMapper
+            },
+            rowMapper
         );
         final List<Api> apis = rowMapper.getRows();
         for (final Api api : apis) {

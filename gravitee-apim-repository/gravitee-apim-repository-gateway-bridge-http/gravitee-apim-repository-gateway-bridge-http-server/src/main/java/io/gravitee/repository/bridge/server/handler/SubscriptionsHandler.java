@@ -30,13 +30,12 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -117,9 +116,9 @@ public class SubscriptionsHandler {
         JsonArray statusArr = payload.getJsonArray("status");
         if (statusArr != null) {
             Set<Subscription.Status> statuses = statusArr
-                    .stream()
-                    .map(obj -> Subscription.Status.valueOf((String) obj))
-                    .collect(Collectors.toSet());
+                .stream()
+                .map(obj -> Subscription.Status.valueOf((String) obj))
+                .collect(Collectors.toSet());
             builder.statuses(statuses);
         }
 

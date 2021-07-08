@@ -15,18 +15,17 @@
  */
 package io.gravitee.repository.mongodb.management.internal.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
-
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 /**
  * Mongo model for Api
- * 
+ *
  * @author Loic DASSONVILLE (loic.dassonville at gmail.com)
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
@@ -41,7 +40,7 @@ public class ApiMongo extends Auditable {
     private String name;
 
     private String environmentId;
-    
+
     private String version;
 
     private String description;
@@ -49,11 +48,11 @@ public class ApiMongo extends Auditable {
     private String definition;
 
     private String lifecycleState;
-    
+
     private String visibility;
 
     private Date deployedAt;
-    
+
     private String picture;
 
     private Set<String> groups;
@@ -139,7 +138,7 @@ public class ApiMongo extends Auditable {
     public void setDeployedAt(Date deployedAt) {
         this.deployedAt = deployedAt;
     }
-    
+
     public String getPicture() {
         return picture;
     }

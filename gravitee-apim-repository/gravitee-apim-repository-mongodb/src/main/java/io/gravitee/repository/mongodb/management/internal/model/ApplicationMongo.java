@@ -15,17 +15,16 @@
  */
 package io.gravitee.repository.mongodb.management.internal.model;
 
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
 /**
  * Mongo object model for application.
- * 
+ *
  * @author Loic DASSONVILLE (loic.dassonville at gmail.com)
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
@@ -33,14 +32,14 @@ import java.util.Set;
 @Document(collection = "applications")
 public class ApplicationMongo extends Auditable {
 
-	@Id
+    @Id
     private String id;
 
     @Field("name")
     private String name;
 
     private String environmentId;
-    
+
     private String description;
 
     private String type;
@@ -103,7 +102,6 @@ public class ApplicationMongo extends Auditable {
         this.groups = groups;
     }
 
-    
     public String getPicture() {
         return picture;
     }

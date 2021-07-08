@@ -15,19 +15,18 @@
  */
 package io.gravitee.repository;
 
-import io.gravitee.repository.config.AbstractRepositoryTest;
-import io.gravitee.repository.management.model.Application;
-import io.gravitee.repository.management.model.ApplicationStatus;
-import io.gravitee.repository.management.model.ApplicationType;
-import org.junit.Test;
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static io.gravitee.repository.utils.DateUtils.compareDate;
 import static io.gravitee.repository.utils.DateUtils.parse;
 import static java.util.Collections.emptyList;
 import static org.junit.Assert.*;
+
+import io.gravitee.repository.config.AbstractRepositoryTest;
+import io.gravitee.repository.management.model.Application;
+import io.gravitee.repository.management.model.ApplicationStatus;
+import io.gravitee.repository.management.model.ApplicationType;
+import java.util.*;
+import java.util.stream.Collectors;
+import org.junit.Test;
 
 /**
  * @author Azize ELAMRANI (azize.elamrani at graviteesource.com)
@@ -56,7 +55,7 @@ public class ApplicationRepositoryTest extends AbstractRepositoryTest {
         assertNotNull(applications);
         assertEquals("Fail to resolve application in findAllByEnvironment", 5, applications.size());
     }
-    
+
     @Test
     public void findAllArchivedTest() throws Exception {
         Set<Application> applications = applicationRepository.findAll(ApplicationStatus.ARCHIVED);
@@ -218,7 +217,10 @@ public class ApplicationRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindByGroupsAndStatus() throws Exception {
-        Set<Application> apps = applicationRepository.findByGroups(Collections.singletonList("application-group"), ApplicationStatus.ARCHIVED);
+        Set<Application> apps = applicationRepository.findByGroups(
+            Collections.singletonList("application-group"),
+            ApplicationStatus.ARCHIVED
+        );
 
         assertNotNull(apps);
         assertEquals(1, apps.size());
@@ -240,11 +242,13 @@ public class ApplicationRepositoryTest extends AbstractRepositoryTest {
         assertNotNull(apps);
         assertFalse(apps.isEmpty());
         assertEquals(2, apps.size());
-        assertTrue(apps.
-                stream().
-                map(Application::getId).
-                collect(Collectors.toList()).
-                containsAll(Arrays.asList("application-sample", "updated-app")));
+        assertTrue(
+            apps
+                .stream()
+                .map(Application::getId)
+                .collect(Collectors.toList())
+                .containsAll(Arrays.asList("application-sample", "updated-app"))
+        );
     }
 
     @Test(expected = IllegalStateException.class)

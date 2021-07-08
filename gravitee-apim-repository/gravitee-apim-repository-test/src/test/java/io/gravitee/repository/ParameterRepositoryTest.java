@@ -21,15 +21,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import org.junit.Test;
-
 import io.gravitee.repository.config.AbstractRepositoryTest;
 import io.gravitee.repository.management.model.Parameter;
 import io.gravitee.repository.management.model.ParameterReferenceType;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import org.junit.Test;
 
 public class ParameterRepositoryTest extends AbstractRepositoryTest {
 
@@ -57,7 +55,6 @@ public class ParameterRepositoryTest extends AbstractRepositoryTest {
         assertEquals("Invalid saved parameter value.", parameter.getValue(), parameterSaved.getValue());
         assertEquals("Invalid saved parameter referenceId.", parameter.getReferenceId(), parameterSaved.getReferenceId());
         assertEquals("Invalid saved parameter referenceType.", parameter.getReferenceType(), parameterSaved.getReferenceType());
-        
     }
 
     @Test
@@ -104,15 +101,21 @@ public class ParameterRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindAll() throws Exception {
-        List<Parameter> parameters = parameterRepository.findAll(Arrays.asList("management.oAuth.clientId", "management.oAuth.clientSecret", "unknown"));
+        List<Parameter> parameters = parameterRepository.findAll(
+            Arrays.asList("management.oAuth.clientId", "management.oAuth.clientSecret", "unknown")
+        );
         assertNotNull(parameters);
         assertFalse(parameters.isEmpty());
         assertEquals(2, parameters.size());
     }
-    
+
     @Test
     public void shouldFindAllByReferenceIdAndReferenceType() throws Exception {
-        List<Parameter> parameters = parameterRepository.findAllByReferenceIdAndReferenceType(null, "DEFAULT", ParameterReferenceType.ENVIRONMENT);
+        List<Parameter> parameters = parameterRepository.findAllByReferenceIdAndReferenceType(
+            null,
+            "DEFAULT",
+            ParameterReferenceType.ENVIRONMENT
+        );
         assertNotNull(parameters);
         assertFalse(parameters.isEmpty());
         assertEquals(3, parameters.size());

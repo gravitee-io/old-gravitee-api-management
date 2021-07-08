@@ -22,11 +22,10 @@ import io.gravitee.repository.management.api.search.Pageable;
 import io.gravitee.repository.management.api.search.UserCriteria;
 import io.gravitee.repository.management.model.User;
 import io.gravitee.repository.management.model.UserReferenceType;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.springframework.stereotype.Component;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -66,7 +65,8 @@ public class HttpUserRepository extends AbstractRepository implements UserReposi
     }
 
     @Override
-    public Optional<User> findBySource(String source, String sourceId, String referenceId, UserReferenceType referenceType) throws TechnicalException {
+    public Optional<User> findBySource(String source, String sourceId, String referenceId, UserReferenceType referenceType)
+        throws TechnicalException {
         throw new IllegalStateException();
     }
 

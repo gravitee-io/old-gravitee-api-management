@@ -32,14 +32,13 @@ import io.vertx.ext.web.client.WebClientOptions;
 import io.vertx.ext.web.client.impl.HttpContext;
 import io.vertx.ext.web.client.impl.WebClientInternal;
 import io.vertx.ext.web.codec.BodyCodec;
+import java.net.URI;
+import java.util.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
-
-import java.net.URI;
-import java.util.Base64;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -85,13 +84,10 @@ public class WebClientFactory implements FactoryBean<WebClient> {
             client.addInterceptor(new BasicAuthorizationInterceptor(username, password));
         }
 
-        circuitBreaker = CircuitBreaker.create(
-                "cb-repository-bridge-client",
-                vertx,
-                new CircuitBreakerOptions()
-                        .setMaxRetries(Integer.MAX_VALUE)
-                        .setTimeout(2000))
-        .retryPolicy(retryCount -> retryDuration);
+        circuitBreaker =
+            CircuitBreaker
+                .create("cb-repository-bridge-client", vertx, new CircuitBreakerOptions().setMaxRetries(Integer.MAX_VALUE).setTimeout(2000))
+                .retryPolicy(retryCount -> retryDuration);
 
         VertxCompletableFuture<WebClientInternal> completableConnection = VertxCompletableFuture.from(vertx, validateConnection(client));
         if (completableConnection.isCompletedExceptionally()) {
@@ -104,66 +100,70 @@ public class WebClientFactory implements FactoryBean<WebClient> {
     private Future<WebClientInternal> validateConnection(WebClientInternal client) {
         logger.info("Validate Bridge Server connection ...");
         return circuitBreaker.execute(
-                future -> client.get(BridgePath.get(environment)).as(BodyCodec.string()).send(response -> {
-                    if (response.succeeded()) {
-                        HttpResponse<String> httpResponse = response.result();
+            future ->
+                client
+                    .get(BridgePath.get(environment))
+                    .as(BodyCodec.string())
+                    .send(
+                        response -> {
+                            if (response.succeeded()) {
+                                HttpResponse<String> httpResponse = response.result();
 
-                        if (httpResponse.statusCode() == HttpStatusCode.OK_200) {
-                            JsonObject jsonObject = new JsonObject(httpResponse.body());
-                            JsonObject version = jsonObject.getJsonObject("version");
-                            if (version == null || !version.containsKey("MAJOR_VERSION")) {
-                                String msg = "Invalid format response from Bridge Server. Retry.";
+                                if (httpResponse.statusCode() == HttpStatusCode.OK_200) {
+                                    JsonObject jsonObject = new JsonObject(httpResponse.body());
+                                    JsonObject version = jsonObject.getJsonObject("version");
+                                    if (version == null || !version.containsKey("MAJOR_VERSION")) {
+                                        String msg = "Invalid format response from Bridge Server. Retry.";
+                                        logger.error(msg);
+                                        future.fail(msg);
+                                    } else {
+                                        String serverVersion = version.getString("MAJOR_VERSION");
+
+                                        if (serverVersion.equals(clientVersion)) {
+                                            logger.info("Bridge Server connection successful.");
+                                            future.complete(client);
+                                        } else {
+                                            String msg = String.format(
+                                                "Bridge client and server versions vary (client:%s - server:%s). They must be the same.",
+                                                clientVersion,
+                                                serverVersion
+                                            );
+                                            logger.error(msg);
+                                            throw new IllegalStateException(msg);
+                                        }
+                                    }
+                                } else {
+                                    String msg = String.format("Invalid Bridge Server response. Retry in %s ms.", retryDuration);
+                                    logger.error(msg);
+                                    future.fail(msg);
+                                }
+                            } else {
+                                String msg = String.format("Unable to connect to the Bridge Server. Retry in %s ms.", retryDuration);
                                 logger.error(msg);
                                 future.fail(msg);
-                            } else {
-                                String serverVersion = version.getString("MAJOR_VERSION");
-
-                                if (serverVersion.equals(clientVersion)) {
-                                    logger.info("Bridge Server connection successful.");
-                                    future.complete(client);
-                                } else {
-                                    String msg = String.format(
-                                            "Bridge client and server versions vary (client:%s - server:%s). They must be the same.",
-                                            clientVersion,
-                                            serverVersion);
-                                    logger.error(msg);
-                                    throw new IllegalStateException(msg);
-                                }
                             }
-                        } else {
-                            String msg = String.format("Invalid Bridge Server response. Retry in %s ms.", retryDuration);
-                            logger.error(msg);
-                            future.fail(msg);
                         }
-                    } else {
-                        String msg = String.format("Unable to connect to the Bridge Server. Retry in %s ms.", retryDuration);
-                        logger.error(msg);
-                        future.fail(msg);
-                    }
-                }));
+                    )
+        );
     }
 
     private WebClientOptions getWebClientOptions() {
-        WebClientOptions options = new WebClientOptions()
-                .setUserAgent("gio-gw/" + Version.RUNTIME_VERSION.MAJOR_VERSION);
+        WebClientOptions options = new WebClientOptions().setUserAgent("gio-gw/" + Version.RUNTIME_VERSION.MAJOR_VERSION);
 
         options
-                .setKeepAlive(readPropertyValue(propertyPrefix + "keepAlive", Boolean.class, true))
-                .setIdleTimeout(readPropertyValue(propertyPrefix + "idleTimeout", Integer.class, 30000))
-                .setConnectTimeout(readPropertyValue(propertyPrefix + "connectTimeout", Integer.class, 10000));
+            .setKeepAlive(readPropertyValue(propertyPrefix + "keepAlive", Boolean.class, true))
+            .setIdleTimeout(readPropertyValue(propertyPrefix + "idleTimeout", Integer.class, 30000))
+            .setConnectTimeout(readPropertyValue(propertyPrefix + "connectTimeout", Integer.class, 10000));
 
         String url = readPropertyValue(propertyPrefix + "url");
         final URI uri = URI.create(url);
 
         options
-                .setDefaultHost(uri.getHost())
-                .setDefaultPort(uri.getPort() != -1 ? uri.getPort() :
-                        (HTTPS_SCHEME.equals(uri.getScheme()) ? 443 : 80));
+            .setDefaultHost(uri.getHost())
+            .setDefaultPort(uri.getPort() != -1 ? uri.getPort() : (HTTPS_SCHEME.equals(uri.getScheme()) ? 443 : 80));
 
         if (HTTPS_SCHEME.equals(uri.getScheme())) {
-            options
-                    .setSsl(true)
-                    .setTrustAll(true);
+            options.setSsl(true).setTrustAll(true);
         }
         return options;
     }
@@ -193,6 +193,7 @@ public class WebClientFactory implements FactoryBean<WebClient> {
     }
 
     private static class ReadTimeoutInterceptor implements Handler<HttpContext<?>> {
+
         private final long timeout;
 
         ReadTimeoutInterceptor(long timeout) {
@@ -207,8 +208,9 @@ public class WebClientFactory implements FactoryBean<WebClient> {
     }
 
     private static class BasicAuthorizationInterceptor implements Handler<HttpContext<?>> {
+
         private final String authorizationSchemeValue;
-        private final static String AUTHORIZATION_SCHEME = "Basic ";
+        private static final String AUTHORIZATION_SCHEME = "Basic ";
 
         BasicAuthorizationInterceptor(String username, String password) {
             authorizationSchemeValue = AUTHORIZATION_SCHEME + Base64.getEncoder().encodeToString((username + ':' + password).getBytes());

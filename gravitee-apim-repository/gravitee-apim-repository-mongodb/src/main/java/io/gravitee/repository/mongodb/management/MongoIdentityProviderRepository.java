@@ -15,19 +15,6 @@
  */
 package io.gravitee.repository.mongodb.management;
 
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.management.api.IdentityProviderRepository;
 import io.gravitee.repository.management.model.IdentityProvider;
@@ -35,6 +22,17 @@ import io.gravitee.repository.management.model.IdentityProviderReferenceType;
 import io.gravitee.repository.mongodb.management.internal.identityprovider.IdentityProviderMongoRepository;
 import io.gravitee.repository.mongodb.management.internal.model.IdentityProviderMongo;
 import io.gravitee.repository.mongodb.management.mapper.GraviteeMapper;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -99,7 +97,6 @@ public class MongoIdentityProviderRepository implements IdentityProviderReposito
 
             IdentityProviderMongo identityProviderMongoUpdated = internalIdentityProviderRepository.save(identityProviderMongo);
             return map(identityProviderMongoUpdated);
-
         } catch (Exception e) {
             LOGGER.error("An error occurs when updating identity provider", e);
             throw new TechnicalException("An error occurs when updating identity provider");
@@ -120,10 +117,8 @@ public class MongoIdentityProviderRepository implements IdentityProviderReposito
     public Set<IdentityProvider> findAll() throws TechnicalException {
         LOGGER.debug("Find all identity providers");
 
-        Set<IdentityProvider> res = internalIdentityProviderRepository.findAll().stream()
-                .map(this::map)
-                .collect(Collectors.toSet());
-        
+        Set<IdentityProvider> res = internalIdentityProviderRepository.findAll().stream().map(this::map).collect(Collectors.toSet());
+
         LOGGER.debug("Find all identity providers - Done");
         return res;
     }
@@ -136,7 +131,7 @@ public class MongoIdentityProviderRepository implements IdentityProviderReposito
         IdentityProviderMongo identityProviderMongo = mapper.map(identityProvider, IdentityProviderMongo.class);
 
         if (identityProvider.getGroupMappings() != null) {
-            Map<String, String []> groupMappings = new HashMap<>(identityProvider.getGroupMappings().size());
+            Map<String, String[]> groupMappings = new HashMap<>(identityProvider.getGroupMappings().size());
             for (Map.Entry<String, String[]> groupEntry : identityProvider.getGroupMappings().entrySet()) {
                 groupMappings.put(new String(Base64.getEncoder().encode(groupEntry.getKey().getBytes())), groupEntry.getValue());
             }
@@ -144,7 +139,7 @@ public class MongoIdentityProviderRepository implements IdentityProviderReposito
         }
 
         if (identityProvider.getRoleMappings() != null) {
-            Map<String, String []> roleMappings = new HashMap<>(identityProvider.getRoleMappings().size());
+            Map<String, String[]> roleMappings = new HashMap<>(identityProvider.getRoleMappings().size());
             for (Map.Entry<String, String[]> roleEntry : identityProvider.getRoleMappings().entrySet()) {
                 roleMappings.put(new String(Base64.getEncoder().encode(roleEntry.getKey().getBytes())), roleEntry.getValue());
             }
@@ -162,33 +157,48 @@ public class MongoIdentityProviderRepository implements IdentityProviderReposito
         IdentityProvider identityProvider = mapper.map(identityProviderMongo, IdentityProvider.class);
 
         if (identityProviderMongo.getGroupMappings() != null) {
-            identityProviderMongo.getGroupMappings()
-                    .forEach((condition, groups) -> {
-                        identityProvider.getGroupMappings().put(new String(Base64.getDecoder().decode(condition)), identityProviderMongo.getGroupMappings().get(condition));
+            identityProviderMongo
+                .getGroupMappings()
+                .forEach(
+                    (condition, groups) -> {
+                        identityProvider
+                            .getGroupMappings()
+                            .put(
+                                new String(Base64.getDecoder().decode(condition)),
+                                identityProviderMongo.getGroupMappings().get(condition)
+                            );
                         identityProvider.getGroupMappings().remove(condition);
-                    });
+                    }
+                );
         }
 
         if (identityProviderMongo.getRoleMappings() != null) {
-            identityProviderMongo.getRoleMappings()
-                    .forEach((condition, roles) -> {
-                        identityProvider.getRoleMappings().put(new String(Base64.getDecoder().decode(condition)), identityProviderMongo.getRoleMappings().get(condition));
+            identityProviderMongo
+                .getRoleMappings()
+                .forEach(
+                    (condition, roles) -> {
+                        identityProvider
+                            .getRoleMappings()
+                            .put(new String(Base64.getDecoder().decode(condition)), identityProviderMongo.getRoleMappings().get(condition));
                         identityProvider.getRoleMappings().remove(condition);
-                    });
+                    }
+                );
         }
 
         return identityProvider;
     }
 
     @Override
-    public Set<IdentityProvider> findAllByReferenceIdAndReferenceType(String referenceId,
-            IdentityProviderReferenceType referenceType) throws TechnicalException {
+    public Set<IdentityProvider> findAllByReferenceIdAndReferenceType(String referenceId, IdentityProviderReferenceType referenceType)
+        throws TechnicalException {
         LOGGER.debug("Find all identity providers by ref");
 
-        Set<IdentityProvider> res = internalIdentityProviderRepository.findByReferenceIdAndReferenceType(referenceId, referenceType.name()).stream()
-                .map(this::map)
-                .collect(Collectors.toSet());
-        
+        Set<IdentityProvider> res = internalIdentityProviderRepository
+            .findByReferenceIdAndReferenceType(referenceId, referenceType.name())
+            .stream()
+            .map(this::map)
+            .collect(Collectors.toSet());
+
         LOGGER.debug("Find all identity providers by ref - Done");
         return res;
     }
