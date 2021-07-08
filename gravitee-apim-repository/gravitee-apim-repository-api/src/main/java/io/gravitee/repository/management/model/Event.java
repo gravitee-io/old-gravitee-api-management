@@ -33,7 +33,7 @@ public class Event {
      * The ID of the environment the event is attached to
      */
     private String environmentId;
-    
+
     /**
      * The event Type
      */

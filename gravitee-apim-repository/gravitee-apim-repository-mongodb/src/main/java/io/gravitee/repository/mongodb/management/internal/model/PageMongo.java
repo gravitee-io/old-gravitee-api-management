@@ -15,12 +15,11 @@
  */
 package io.gravitee.repository.mongodb.management.internal.model;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
  * @author Titouan COMPIEGNE (titouan.compiegne at graviteesource.com)
@@ -29,27 +28,26 @@ import java.util.Objects;
 @Document(collection = "pages")
 public class PageMongo extends Auditable {
 
-	@Id
-	private String id;
-	private String referenceId;
+    @Id
+    private String id;
+
+    private String referenceId;
     private String referenceType;
-	private String name;
-	private String type;
-	private String title;
-	private String content;
-	private String lastContributor;
-	private int order;
-	private boolean published;
-	private PageSourceMongo source;
-	private Map<String, String> configuration;
-	private boolean homepage;
-	private List<String> excludedGroups;
+    private String name;
+    private String type;
+    private String title;
+    private String content;
+    private String lastContributor;
+    private int order;
+    private boolean published;
+    private PageSourceMongo source;
+    private Map<String, String> configuration;
+    private boolean homepage;
+    private List<String> excludedGroups;
     private String parentId;
-	private Map<String, String> metadata;
+    private Map<String, String> metadata;
 
-	
-
-	public String getId() {
+    public String getId() {
         return id;
     }
 
@@ -74,137 +72,169 @@ public class PageMongo extends Auditable {
     }
 
     public String getName() {
-		return name;
-	}
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public String getTitle() {
-		return title;
-	}
+    public String getTitle() {
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public String getLastContributor() {
-		return lastContributor;
-	}
+    public String getLastContributor() {
+        return lastContributor;
+    }
 
-	public void setLastContributor(String lastContributor) {
-		this.lastContributor = lastContributor;
-	}
+    public void setLastContributor(String lastContributor) {
+        this.lastContributor = lastContributor;
+    }
 
-	public int getOrder() {
-		return order;
-	}
+    public int getOrder() {
+        return order;
+    }
 
-	public void setOrder(int order) {
-		this.order = order;
-	}
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-	public boolean isPublished() {
-		return published;
-	}
+    public boolean isPublished() {
+        return published;
+    }
 
-	public void setPublished(boolean published) {
-		this.published = published;
-	}
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
 
-	public PageSourceMongo getSource() {
-		return source;
-	}
+    public PageSourceMongo getSource() {
+        return source;
+    }
 
-	public void setSource(PageSourceMongo source) {
-		this.source = source;
-	}
+    public void setSource(PageSourceMongo source) {
+        this.source = source;
+    }
 
-	public Map<String, String> getConfiguration() {
-		return configuration;
-	}
+    public Map<String, String> getConfiguration() {
+        return configuration;
+    }
 
-	public void setConfiguration(Map<String, String> configuration) {
-		this.configuration = configuration;
-	}
+    public void setConfiguration(Map<String, String> configuration) {
+        this.configuration = configuration;
+    }
 
-	public boolean isHomepage() {
-		return homepage;
-	}
+    public boolean isHomepage() {
+        return homepage;
+    }
 
-	public void setHomepage(boolean homepage) {
-		this.homepage = homepage;
-	}
+    public void setHomepage(boolean homepage) {
+        this.homepage = homepage;
+    }
 
-	public List<String> getExcludedGroups() {
-		return excludedGroups;
-	}
+    public List<String> getExcludedGroups() {
+        return excludedGroups;
+    }
 
-	public void setExcludedGroups(List<String> excludedGroups) {
-		this.excludedGroups = excludedGroups;
-	}
+    public void setExcludedGroups(List<String> excludedGroups) {
+        this.excludedGroups = excludedGroups;
+    }
 
-    public String getParentId() { return parentId; }
+    public String getParentId() {
+        return parentId;
+    }
 
-    public void setParentId(String parentId) { this.parentId = parentId; }
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof PageMongo)) return false;
-		PageMongo pageMongo = (PageMongo) o;
-		return Objects.equals(id, pageMongo.id);
-	}
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof PageMongo)) return false;
+        PageMongo pageMongo = (PageMongo) o;
+        return Objects.equals(id, pageMongo.id);
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 
-	@Override
-	public String toString() {
-		return "PageMongo{" +
-				"id='" + id + '\'' +
-                ", referenceId='" + referenceId + '\'' +
-                ", referenceType='" + referenceType + '\'' +
-				", name='" + name + '\'' +
-				", type='" + type + '\'' +
-				", title='" + title + '\'' +
-				", content='" + content + '\'' +
-				", lastContributor='" + lastContributor + '\'' +
-				", order=" + order +
-				", published=" + published +
-				", source=" + source +
-				", configuration=" + configuration +
-				", homepage=" + homepage +
-				", excludedGroups=" + excludedGroups +
-				", parentId='" + parentId + '\'' +
-				", metadata=" + metadata +
-				"} " + super.toString();
-	}
+    @Override
+    public String toString() {
+        return (
+            "PageMongo{" +
+            "id='" +
+            id +
+            '\'' +
+            ", referenceId='" +
+            referenceId +
+            '\'' +
+            ", referenceType='" +
+            referenceType +
+            '\'' +
+            ", name='" +
+            name +
+            '\'' +
+            ", type='" +
+            type +
+            '\'' +
+            ", title='" +
+            title +
+            '\'' +
+            ", content='" +
+            content +
+            '\'' +
+            ", lastContributor='" +
+            lastContributor +
+            '\'' +
+            ", order=" +
+            order +
+            ", published=" +
+            published +
+            ", source=" +
+            source +
+            ", configuration=" +
+            configuration +
+            ", homepage=" +
+            homepage +
+            ", excludedGroups=" +
+            excludedGroups +
+            ", parentId='" +
+            parentId +
+            '\'' +
+            ", metadata=" +
+            metadata +
+            "} " +
+            super.toString()
+        );
+    }
 }

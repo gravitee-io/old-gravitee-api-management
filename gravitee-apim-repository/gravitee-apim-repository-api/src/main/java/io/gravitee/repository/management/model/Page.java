@@ -26,195 +26,226 @@ import java.util.Objects;
  * @author GraviteeSource Team
  */
 public class Page {
-	public enum AuditEvent implements Audit.ApiAuditEvent {
-		PAGE_CREATED, PAGE_UPDATED, PAGE_DELETED, PAGE_PUBLISHED
-	}
 
-	private String id;
-	private String referenceId;
-	private PageReferenceType referenceType;
-	private String name;
-	private String type;
-	private String content;
-	private String lastContributor;
-	private int order;
-	private boolean published;
-	private PageSource source;
-	private Map<String, String> configuration;
-	private boolean homepage;
-	private Date createdAt;
-	private Date updatedAt;
-	private String parentId;
-	private List<String> excludedGroups;
-	private Map<String, String> metadata;
+    public enum AuditEvent implements Audit.ApiAuditEvent {
+        PAGE_CREATED,
+        PAGE_UPDATED,
+        PAGE_DELETED,
+        PAGE_PUBLISHED,
+    }
 
-	public String getId() {
-		return id;
-	}
+    private String id;
+    private String referenceId;
+    private PageReferenceType referenceType;
+    private String name;
+    private String type;
+    private String content;
+    private String lastContributor;
+    private int order;
+    private boolean published;
+    private PageSource source;
+    private Map<String, String> configuration;
+    private boolean homepage;
+    private Date createdAt;
+    private Date updatedAt;
+    private String parentId;
+    private List<String> excludedGroups;
+    private Map<String, String> metadata;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getReferenceId() {
-		return referenceId;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setReferenceId(String referenceId) {
-		this.referenceId = referenceId;
-	}
+    public String getReferenceId() {
+        return referenceId;
+    }
 
-	public PageReferenceType getReferenceType() {
-		return referenceType;
-	}
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
 
-	public void setReferenceType(PageReferenceType referenceType) {
-		this.referenceType = referenceType;
-	}
+    public PageReferenceType getReferenceType() {
+        return referenceType;
+    }
 
-	public String getType() {
-		return type;
-	}
-	
-	public String getName() {
-		return name;
-	}
+    public void setReferenceType(PageReferenceType referenceType) {
+        this.referenceType = referenceType;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public void setType(String type) {
-		this.type = type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setContent(String content) {
-		this.content = content;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getLastContributor() {
-		return lastContributor;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
-	public void setLastContributor(String lastContributor) {
-		this.lastContributor = lastContributor;
-	}
-	
-	public int getOrder() {
-		return order;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	public void setOrder(int order) {
-		this.order = order;
-	}
+    public void setContent(String content) {
+        this.content = content;
+    }
 
-	public Date getCreatedAt() {
-		return createdAt;
-	}
+    public String getLastContributor() {
+        return lastContributor;
+    }
 
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
+    public void setLastContributor(String lastContributor) {
+        this.lastContributor = lastContributor;
+    }
 
-	public Date getUpdatedAt() {
-		return updatedAt;
-	}
+    public int getOrder() {
+        return order;
+    }
 
-	public void setUpdatedAt(Date updatedAt) {
-		this.updatedAt = updatedAt;
-	}
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-	public boolean isPublished() {
-		return published;
-	}
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 
-	public void setPublished(boolean published) {
-		this.published = published;
-	}
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
 
-	public PageSource getSource() {
-		return source;
-	}
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
 
-	public void setSource(PageSource source) {
-		this.source = source;
-	}
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
-	public Map<String, String> getConfiguration() {
-		return configuration;
-	}
+    public boolean isPublished() {
+        return published;
+    }
 
-	public void setConfiguration(Map<String, String> configuration) {
-		this.configuration = configuration;
-	}
+    public void setPublished(boolean published) {
+        this.published = published;
+    }
 
-	public boolean isHomepage() {
-		return homepage;
-	}
+    public PageSource getSource() {
+        return source;
+    }
 
-	public void setHomepage(boolean homepage) {
-		this.homepage = homepage;
-	}
+    public void setSource(PageSource source) {
+        this.source = source;
+    }
 
-	public List<String> getExcludedGroups() {
-		return excludedGroups;
-	}
+    public Map<String, String> getConfiguration() {
+        return configuration;
+    }
 
-	public void setExcludedGroups(List<String> excludedGroups) {
-		this.excludedGroups = excludedGroups;
-	}
+    public void setConfiguration(Map<String, String> configuration) {
+        this.configuration = configuration;
+    }
 
-	public String getParentId() { return parentId; }
+    public boolean isHomepage() {
+        return homepage;
+    }
 
-	public void setParentId(String parentId) { this.parentId = parentId; }
+    public void setHomepage(boolean homepage) {
+        this.homepage = homepage;
+    }
 
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
+    public List<String> getExcludedGroups() {
+        return excludedGroups;
+    }
 
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
+    public void setExcludedGroups(List<String> excludedGroups) {
+        this.excludedGroups = excludedGroups;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-		Page page = (Page) o;
-		return Objects.equals(id, page.id) && 
-		        Objects.equals(referenceId, page.referenceId) && 
-		        referenceType == page.referenceType ;
-	}
+    public String getParentId() {
+        return parentId;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id, referenceId, referenceType);
-	}
+    public void setParentId(String parentId) {
+        this.parentId = parentId;
+    }
 
-	@Override
-	public String toString() {
-		return "Page{" +
-				"id='" + id + '\'' +
-				", referenceId='" + referenceId + '\'' +
-				", referenceType=" + referenceType +
-				", name='" + name + '\'' +
-				", type=" + type +
-				", content='" + content + '\'' +
-				", lastContributor='" + lastContributor + '\'' +
-				", order=" + order +
-				", published=" + published +
-				", source=" + source +
-				", configuration=" + configuration +
-				", homepage=" + homepage +
-				", createdAt=" + createdAt +
-				", updatedAt=" + updatedAt +
-				", parentId='" + parentId + '\'' +
-				", excludedGroups=" + excludedGroups +
-				", metadata=" + metadata +
-				'}';
-	}
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Page page = (Page) o;
+        return Objects.equals(id, page.id) && Objects.equals(referenceId, page.referenceId) && referenceType == page.referenceType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, referenceId, referenceType);
+    }
+
+    @Override
+    public String toString() {
+        return (
+            "Page{" +
+            "id='" +
+            id +
+            '\'' +
+            ", referenceId='" +
+            referenceId +
+            '\'' +
+            ", referenceType=" +
+            referenceType +
+            ", name='" +
+            name +
+            '\'' +
+            ", type=" +
+            type +
+            ", content='" +
+            content +
+            '\'' +
+            ", lastContributor='" +
+            lastContributor +
+            '\'' +
+            ", order=" +
+            order +
+            ", published=" +
+            published +
+            ", source=" +
+            source +
+            ", configuration=" +
+            configuration +
+            ", homepage=" +
+            homepage +
+            ", createdAt=" +
+            createdAt +
+            ", updatedAt=" +
+            updatedAt +
+            ", parentId='" +
+            parentId +
+            '\'' +
+            ", excludedGroups=" +
+            excludedGroups +
+            ", metadata=" +
+            metadata +
+            '}'
+        );
+    }
 }

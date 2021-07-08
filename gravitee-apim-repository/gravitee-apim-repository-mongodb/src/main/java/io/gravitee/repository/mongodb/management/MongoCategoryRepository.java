@@ -21,15 +21,14 @@ import io.gravitee.repository.management.model.Category;
 import io.gravitee.repository.mongodb.management.internal.api.CategoryMongoRepository;
 import io.gravitee.repository.mongodb.management.internal.model.CategoryMongo;
 import io.gravitee.repository.mongodb.management.mapper.GraviteeMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Azize ELAMRANI (azize.elamrani at graviteesource.com)
@@ -96,7 +95,6 @@ public class MongoCategoryRepository implements CategoryRepository {
             CategoryMongo categoryMongoUpdated = internalCategoryRepo.save(mapper.map(category, CategoryMongo.class));
             return mapper.map(categoryMongoUpdated, Category.class);
         } catch (Exception e) {
-
             LOGGER.error("An error occured when updating category", e);
             throw new TechnicalException("An error occured when updating category");
         }
@@ -115,16 +113,12 @@ public class MongoCategoryRepository implements CategoryRepository {
     @Override
     public Set<Category> findAll() throws TechnicalException {
         final List<CategoryMongo> categories = internalCategoryRepo.findAll();
-        return categories.stream()
-                .map(categoryMongo -> mapper.map(categoryMongo, Category.class))
-                .collect(Collectors.toSet());
+        return categories.stream().map(categoryMongo -> mapper.map(categoryMongo, Category.class)).collect(Collectors.toSet());
     }
 
     @Override
     public Set<Category> findAllByEnvironment(String environmentId) throws TechnicalException {
         final List<CategoryMongo> categories = internalCategoryRepo.findByEnvironmentId(environmentId);
-        return categories.stream()
-                .map(categoryMongo -> mapper.map(categoryMongo, Category.class))
-                .collect(Collectors.toSet());
+        return categories.stream().map(categoryMongo -> mapper.map(categoryMongo, Category.class)).collect(Collectors.toSet());
     }
 }

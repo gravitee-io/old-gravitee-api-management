@@ -18,22 +18,20 @@ package io.gravitee.repository.jdbc.management;
 import static io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration.escapeReservedWord;
 import static org.springframework.util.StringUtils.isEmpty;
 
+import io.gravitee.repository.exceptions.TechnicalException;
+import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
+import io.gravitee.repository.management.api.ParameterRepository;
+import io.gravitee.repository.management.model.Parameter;
+import io.gravitee.repository.management.model.ParameterReferenceType;
 import java.sql.PreparedStatement;
 import java.sql.Types;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-
-import io.gravitee.repository.exceptions.TechnicalException;
-import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
-import io.gravitee.repository.management.api.ParameterRepository;
-import io.gravitee.repository.management.model.Parameter;
-import io.gravitee.repository.management.model.ParameterReferenceType;
 
 /**
  * @author njt
@@ -46,12 +44,13 @@ public class JdbcParameterRepository extends JdbcAbstractCrudRepository<Paramete
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcParameterRepository.class);
 
-    private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(Parameter.class, "parameters", "key")
-            .addColumn("key", Types.NVARCHAR, String.class)
-            .addColumn("reference_id", Types.NVARCHAR, String.class)
-            .addColumn("reference_type", Types.NVARCHAR, ParameterReferenceType.class)
-            .addColumn("value", Types.NVARCHAR, String.class)
-            .build();
+    private static final JdbcObjectMapper ORM = JdbcObjectMapper
+        .builder(Parameter.class, "parameters", "key")
+        .addColumn("key", Types.NVARCHAR, String.class)
+        .addColumn("reference_id", Types.NVARCHAR, String.class)
+        .addColumn("reference_type", Types.NVARCHAR, ParameterReferenceType.class)
+        .addColumn("value", Types.NVARCHAR, String.class)
+        .build();
 
     @Override
     protected JdbcObjectMapper getOrm() {
@@ -70,10 +69,10 @@ public class JdbcParameterRepository extends JdbcAbstractCrudRepository<Paramete
             if (isEmpty(keys)) {
                 return Collections.emptyList();
             }
-            List<Parameter> parameters = jdbcTemplate.query("select * from parameters where " + escapeReservedWord("key") + " in ( "
-                            + ORM.buildInClause(keys) + " )"
-                    , (PreparedStatement ps) -> ORM.setArguments(ps, keys, 1)
-                    , ORM.getRowMapper()
+            List<Parameter> parameters = jdbcTemplate.query(
+                "select * from parameters where " + escapeReservedWord("key") + " in ( " + ORM.buildInClause(keys) + " )",
+                (PreparedStatement ps) -> ORM.setArguments(ps, keys, 1),
+                ORM.getRowMapper()
             );
             return new ArrayList<>(parameters);
         } catch (final Exception ex) {
@@ -83,19 +82,24 @@ public class JdbcParameterRepository extends JdbcAbstractCrudRepository<Paramete
     }
 
     @Override
-    public List<Parameter> findAllByReferenceIdAndReferenceType(List<String> keys, String referenceId,
-            ParameterReferenceType referenceType) throws TechnicalException {
+    public List<Parameter> findAllByReferenceIdAndReferenceType(
+        List<String> keys,
+        String referenceId,
+        ParameterReferenceType referenceType
+    ) throws TechnicalException {
         LOGGER.debug("JdbcParameterRepository.findAllByReferenceIdAndReferenceType({}, {}, {})", keys, referenceId, referenceType);
         try {
             String sql = "select * from parameters where reference_id = ? and reference_type = ?";
             if (!isEmpty(keys)) {
-                sql += " and " + escapeReservedWord("key") + " in ( "+ ORM.buildInClause(keys) + " )";
+                sql += " and " + escapeReservedWord("key") + " in ( " + ORM.buildInClause(keys) + " )";
             }
-            List<Parameter> parameters = jdbcTemplate.query(sql, (PreparedStatement ps) -> {
-                        ORM.setArguments(ps, Arrays.asList(referenceId, referenceType.name()), 1);
-                        if(!isEmpty(keys)) ORM.setArguments(ps, keys, 3);
-                    }
-                    , ORM.getRowMapper()
+            List<Parameter> parameters = jdbcTemplate.query(
+                sql,
+                (PreparedStatement ps) -> {
+                    ORM.setArguments(ps, Arrays.asList(referenceId, referenceType.name()), 1);
+                    if (!isEmpty(keys)) ORM.setArguments(ps, keys, 3);
+                },
+                ORM.getRowMapper()
             );
             return new ArrayList<>(parameters);
         } catch (final Exception ex) {

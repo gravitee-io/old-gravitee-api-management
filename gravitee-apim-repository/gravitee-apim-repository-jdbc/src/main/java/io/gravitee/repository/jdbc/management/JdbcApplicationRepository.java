@@ -15,27 +15,26 @@
  */
 package io.gravitee.repository.jdbc.management;
 
+import static java.lang.String.format;
+import static java.util.Collections.emptySet;
+import static org.springframework.util.CollectionUtils.isEmpty;
+
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
 import io.gravitee.repository.management.api.ApplicationRepository;
 import io.gravitee.repository.management.model.Application;
 import io.gravitee.repository.management.model.ApplicationStatus;
 import io.gravitee.repository.management.model.ApplicationType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.RowMapper;
-import org.springframework.stereotype.Repository;
-
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 import java.util.*;
-
-import static java.lang.String.format;
-import static java.util.Collections.emptySet;
-import static org.springframework.util.CollectionUtils.isEmpty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
 
 /**
  *
@@ -49,18 +48,19 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
     private static final String TYPE_FIELD = "type";
     private static final String STATUS_FIELD = "status";
 
-    private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(Application.class, "applications", "id")
-            .addColumn("id", Types.NVARCHAR, String.class)
-            .addColumn("environment_id", Types.NVARCHAR, String.class)
-            .addColumn("name", Types.NVARCHAR, String.class)
-            .addColumn("description", Types.NVARCHAR, String.class)
-            .addColumn(TYPE_FIELD, Types.NVARCHAR, ApplicationType.class)
-            .addColumn("created_at", Types.TIMESTAMP, Date.class)
-            .addColumn("updated_at", Types.TIMESTAMP, Date.class)
-            .addColumn("picture", Types.NVARCHAR, String.class)
-            .addColumn(STATUS_FIELD, Types.NVARCHAR, ApplicationStatus.class)
-            .addColumn("disable_membership_notifications", Types.BIT, boolean.class)
-            .build();
+    private static final JdbcObjectMapper ORM = JdbcObjectMapper
+        .builder(Application.class, "applications", "id")
+        .addColumn("id", Types.NVARCHAR, String.class)
+        .addColumn("environment_id", Types.NVARCHAR, String.class)
+        .addColumn("name", Types.NVARCHAR, String.class)
+        .addColumn("description", Types.NVARCHAR, String.class)
+        .addColumn(TYPE_FIELD, Types.NVARCHAR, ApplicationType.class)
+        .addColumn("created_at", Types.TIMESTAMP, Date.class)
+        .addColumn("updated_at", Types.TIMESTAMP, Date.class)
+        .addColumn("picture", Types.NVARCHAR, String.class)
+        .addColumn(STATUS_FIELD, Types.NVARCHAR, ApplicationStatus.class)
+        .addColumn("disable_membership_notifications", Types.BIT, boolean.class)
+        .build();
 
     private static final JdbcHelper.ChildAdder<Application> CHILD_ADDER = (Application parent, ResultSet rs) -> {
         Map<String, String> metadata = parent.getMetadata();
@@ -82,24 +82,26 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
     protected String getId(Application item) {
         return item.getId();
     }
-    
-    private void addGroups(Application parent) {        
+
+    private void addGroups(Application parent) {
         List<String> groups = getGroups(parent.getId());
         parent.setGroups(new HashSet<>(groups));
     }
-    
+
     private List<String> getGroups(String apiId) {
         return jdbcTemplate.queryForList("select group_id from application_groups where application_id = ?", String.class, apiId);
     }
-    
+
     private void storeGroups(Application application, boolean deleteFirst) {
         if (deleteFirst) {
             jdbcTemplate.update("delete from application_groups where application_id = ?", application.getId());
         }
         List<String> filteredGroups = ORM.filterStrings(application.getGroups());
-        if (! filteredGroups.isEmpty()) {
-            jdbcTemplate.batchUpdate("insert into application_groups ( application_id, group_id ) values ( ?, ? )"
-                    , ORM.getBatchStringSetter(application.getId(), filteredGroups));
+        if (!filteredGroups.isEmpty()) {
+            jdbcTemplate.batchUpdate(
+                "insert into application_groups ( application_id, group_id ) values ( ?, ? )",
+                ORM.getBatchStringSetter(application.getId(), filteredGroups)
+            );
         }
     }
 
@@ -109,20 +111,22 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
         }
         if (application.getMetadata() != null && !application.getMetadata().isEmpty()) {
             List<Map.Entry<String, String>> entries = new ArrayList<>(application.getMetadata().entrySet());
-            jdbcTemplate.batchUpdate("insert into application_metadata ( application_id, k, v ) values ( ?, ?, ? )"
-                    , new BatchPreparedStatementSetter() {
-                        @Override
-                        public void setValues(PreparedStatement ps, int i) throws SQLException {
-                            ps.setString(1, application.getId());
-                            ps.setString(2, entries.get(i).getKey());
-                            ps.setString(3, entries.get(i).getValue());
-                        }
+            jdbcTemplate.batchUpdate(
+                "insert into application_metadata ( application_id, k, v ) values ( ?, ?, ? )",
+                new BatchPreparedStatementSetter() {
+                    @Override
+                    public void setValues(PreparedStatement ps, int i) throws SQLException {
+                        ps.setString(1, application.getId());
+                        ps.setString(2, entries.get(i).getKey());
+                        ps.setString(3, entries.get(i).getValue());
+                    }
 
-                        @Override
-                        public int getBatchSize() {
-                            return entries.size();
-                        }
-                    });
+                    @Override
+                    public int getBatchSize() {
+                        return entries.size();
+                    }
+                }
+            );
         }
     }
 
@@ -150,7 +154,8 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
             jdbcTemplate.update(ORM.buildUpdatePreparedStatementCreator(application, application.getId()));
             storeGroups(application, true);
             storeMetadata(application, true);
-            return findById(application.getId()).orElseThrow(() -> new IllegalStateException(format("No application found with id [%s]", application.getId())));
+            return findById(application.getId())
+                .orElseThrow(() -> new IllegalStateException(format("No application found with id [%s]", application.getId())));
         } catch (final IllegalStateException ex) {
             throw ex;
         } catch (final Exception ex) {
@@ -160,6 +165,7 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
     }
 
     private class Rm implements RowMapper<Application> {
+
         @Override
         public Application mapRow(ResultSet rs, int i) throws SQLException {
             Application application = new Application();
@@ -176,9 +182,10 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
         LOGGER.debug("JdbcApplicationRepository.findById({})", id);
         try {
             JdbcHelper.CollatingRowMapper<Application> rowMapper = new JdbcHelper.CollatingRowMapper<>(mapper, CHILD_ADDER, "id");
-            jdbcTemplate.query("select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where a.id = ?"
-                    , rowMapper
-                    , id
+            jdbcTemplate.query(
+                "select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where a.id = ?",
+                rowMapper,
+                id
             );
             Optional<Application> result = rowMapper.getRows().stream().findFirst();
             result.ifPresent(this::addGroups);
@@ -198,10 +205,12 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
                 return emptySet();
             }
             JdbcHelper.CollatingRowMapper<Application> rowMapper = new JdbcHelper.CollatingRowMapper<>(mapper, CHILD_ADDER, "id");
-            jdbcTemplate.query("select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where a.id in ( "
-                    + ORM.buildInClause(ids) + " )"
-                    , (PreparedStatement ps) -> ORM.setArguments(ps, ids, 1)
-                    , rowMapper
+            jdbcTemplate.query(
+                "select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where a.id in ( " +
+                ORM.buildInClause(ids) +
+                " )",
+                (PreparedStatement ps) -> ORM.setArguments(ps, ids, 1),
+                rowMapper
             );
             for (Application application : rowMapper.getRows()) {
                 addGroups(application);
@@ -215,20 +224,19 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
 
     @Override
     public Set<Application> findAll(ApplicationStatus... ass) throws TechnicalException {
-        LOGGER.debug("JdbcApplicationRepository.findAll({})", (Object[])ass);
+        LOGGER.debug("JdbcApplicationRepository.findAll({})", (Object[]) ass);
 
         try {
             List<ApplicationStatus> statuses = Arrays.asList(ass);
-            
-            StringBuilder query = new StringBuilder("select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id");
+
+            StringBuilder query = new StringBuilder(
+                "select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id"
+            );
             boolean first = true;
             ORM.buildInCondition(first, query, STATUS_FIELD, statuses);
 
             JdbcHelper.CollatingRowMapper<Application> rowMapper = new JdbcHelper.CollatingRowMapper<>(mapper, CHILD_ADDER, "id");
-            jdbcTemplate.query(query.toString()
-                    , (PreparedStatement ps) -> ORM.setArguments(ps, statuses, 1)
-                    , rowMapper
-            );
+            jdbcTemplate.query(query.toString(), (PreparedStatement ps) -> ORM.setArguments(ps, statuses, 1), rowMapper);
             for (Application application : rowMapper.getRows()) {
                 addGroups(application);
             }
@@ -248,18 +256,21 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
         }
         try {
             final List<ApplicationStatus> statuses = Arrays.asList(ass);
-            final StringBuilder query = new StringBuilder("select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id join application_groups ag on ag.application_id = a.id ");
+            final StringBuilder query = new StringBuilder(
+                "select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id join application_groups ag on ag.application_id = a.id "
+            );
             boolean first = true;
             first = ORM.buildInCondition(first, query, "group_id", groupIds);
             ORM.buildInCondition(first, query, STATUS_FIELD, statuses);
 
             JdbcHelper.CollatingRowMapper<Application> rowMapper = new JdbcHelper.CollatingRowMapper<>(mapper, CHILD_ADDER, "id");
-            jdbcTemplate.query(query.toString()
-                    , (PreparedStatement ps) -> {
-                        int idx = ORM.setArguments(ps, groupIds, 1);
-                        ORM.setArguments(ps, statuses, idx);
-                    }
-                    , rowMapper
+            jdbcTemplate.query(
+                query.toString(),
+                (PreparedStatement ps) -> {
+                    int idx = ORM.setArguments(ps, groupIds, 1);
+                    ORM.setArguments(ps, statuses, idx);
+                },
+                rowMapper
             );
             for (Application application : rowMapper.getRows()) {
                 addGroups(application);
@@ -276,8 +287,10 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
         LOGGER.debug("JdbcApplicationRepository.findByName({})", partialName);
         try {
             JdbcHelper.CollatingRowMapper<Application> rowMapper = new JdbcHelper.CollatingRowMapper<>(mapper, CHILD_ADDER, "id");
-            jdbcTemplate.query("select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where lower(name) like ?"
-                    , rowMapper, "%" + partialName.toLowerCase() + "%"
+            jdbcTemplate.query(
+                "select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where lower(name) like ?",
+                rowMapper,
+                "%" + partialName.toLowerCase() + "%"
             );
             for (Application application : rowMapper.getRows()) {
                 addGroups(application);
@@ -290,24 +303,26 @@ public class JdbcApplicationRepository extends JdbcAbstractCrudRepository<Applic
     }
 
     @Override
-    public Set<Application> findAllByEnvironment(String environmentId, ApplicationStatus... ass)
-            throws TechnicalException {
-        LOGGER.debug("JdbcApplicationRepository.findAllByEnvironment({}, {})", environmentId, (Object[])ass);
+    public Set<Application> findAllByEnvironment(String environmentId, ApplicationStatus... ass) throws TechnicalException {
+        LOGGER.debug("JdbcApplicationRepository.findAllByEnvironment({}, {})", environmentId, (Object[]) ass);
 
         try {
             List<ApplicationStatus> statuses = Arrays.asList(ass);
-            
-            StringBuilder query = new StringBuilder("select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where a.environment_id = ?");
+
+            StringBuilder query = new StringBuilder(
+                "select a.*, am.k as am_k, am.v as am_v from applications a left join application_metadata am on a.id = am.application_id where a.environment_id = ?"
+            );
             boolean first = false;
             ORM.buildInCondition(first, query, STATUS_FIELD, statuses);
 
             JdbcHelper.CollatingRowMapper<Application> rowMapper = new JdbcHelper.CollatingRowMapper<>(mapper, CHILD_ADDER, "id");
-            jdbcTemplate.query(query.toString()
-                    , (PreparedStatement ps) -> {
-                        ORM.setArguments(ps, Arrays.asList(environmentId), 1);
-                        ORM.setArguments(ps, statuses, 2);
-                    }
-                    , rowMapper
+            jdbcTemplate.query(
+                query.toString(),
+                (PreparedStatement ps) -> {
+                    ORM.setArguments(ps, Arrays.asList(environmentId), 1);
+                    ORM.setArguments(ps, statuses, 2);
+                },
+                rowMapper
             );
             for (Application application : rowMapper.getRows()) {
                 addGroups(application);

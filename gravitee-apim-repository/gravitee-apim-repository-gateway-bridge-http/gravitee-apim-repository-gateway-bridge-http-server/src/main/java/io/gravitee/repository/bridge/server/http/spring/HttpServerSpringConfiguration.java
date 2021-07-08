@@ -39,10 +39,7 @@ public class HttpServerSpringConfiguration {
 
     @Bean("vertxBridgeHttpServer")
     public HttpServer httpServer(Vertx vertx, HttpServerConfiguration configuration) {
-        HttpServerOptions options =
-            new HttpServerOptions()
-                .setPort(configuration.getPort())
-                .setHost(configuration.getHost());
+        HttpServerOptions options = new HttpServerOptions().setPort(configuration.getPort()).setHost(configuration.getHost());
 
         return vertx.createHttpServer(options);
     }

@@ -32,13 +32,12 @@ import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -69,8 +68,10 @@ public class EventsHandler {
                     int page = Integer.parseInt(pageNumber);
                     int size = Integer.parseInt(pageSize);
 
-                    Page<Event> events = eventRepository.search(eventCriteria,
-                            new PageableBuilder().pageNumber(page).pageSize(size).build());
+                    Page<Event> events = eventRepository.search(
+                        eventCriteria,
+                        new PageableBuilder().pageNumber(page).pageSize(size).build()
+                    );
 
                     response.putHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
                     response.setStatusCode(HttpStatusCode.OK_200);
@@ -162,9 +163,7 @@ public class EventsHandler {
 
         JsonArray typesArr = payload.getJsonArray("types");
         if (typesArr != null) {
-            Set<EventType> types = typesArr.stream()
-                    .map(obj -> EventType.valueOf((String) obj))
-                    .collect(Collectors.toSet());
+            Set<EventType> types = typesArr.stream().map(obj -> EventType.valueOf((String) obj)).collect(Collectors.toSet());
 
             builder.types(types.toArray(new EventType[types.size()]));
         }

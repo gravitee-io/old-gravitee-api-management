@@ -15,18 +15,17 @@
  */
 package io.gravitee.repository;
 
+import static io.gravitee.repository.utils.DateUtils.compareDate;
+import static org.junit.Assert.*;
+
 import io.gravitee.repository.config.AbstractRepositoryTest;
 import io.gravitee.repository.management.model.Dictionary;
 import io.gravitee.repository.management.model.DictionaryType;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
-
-import static io.gravitee.repository.utils.DateUtils.compareDate;
-import static org.junit.Assert.*;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class DictionaryRepositoryTest extends AbstractRepositoryTest {
 
@@ -50,7 +49,7 @@ public class DictionaryRepositoryTest extends AbstractRepositoryTest {
         assertNotNull(dictionaries);
         assertEquals(3, dictionaries.size());
     }
-    
+
     @Test
     public void shouldCreate() throws Exception {
         final Dictionary dictionary = new Dictionary();
@@ -72,7 +71,7 @@ public class DictionaryRepositoryTest extends AbstractRepositoryTest {
         Assert.assertTrue("Dictionary saved not found", optional.isPresent());
 
         final Dictionary dictionarySaved = optional.get();
-        Assert.assertEquals("Invalid saved environment id.",  dictionary.getEnvironmentId(), dictionarySaved.getEnvironmentId());
+        Assert.assertEquals("Invalid saved environment id.", dictionary.getEnvironmentId(), dictionarySaved.getEnvironmentId());
         Assert.assertEquals("Invalid saved dictionary name.", dictionary.getName(), dictionarySaved.getName());
         Assert.assertEquals("Invalid dictionary description.", dictionary.getDescription(), dictionarySaved.getDescription());
         Assert.assertTrue("Invalid dictionary createdAt.", compareDate(dictionary.getCreatedAt(), dictionarySaved.getCreatedAt()));

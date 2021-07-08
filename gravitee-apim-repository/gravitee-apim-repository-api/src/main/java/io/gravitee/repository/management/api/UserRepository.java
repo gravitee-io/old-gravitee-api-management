@@ -21,7 +21,6 @@ import io.gravitee.repository.management.api.search.Pageable;
 import io.gravitee.repository.management.api.search.UserCriteria;
 import io.gravitee.repository.management.model.User;
 import io.gravitee.repository.management.model.UserReferenceType;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -32,41 +31,41 @@ import java.util.Set;
  * @author GraviteeSource Team
  */
 public interface UserRepository extends CrudRepository<User, String> {
+    /**
+     * Find a {@link User} by its source and user ID.
+     *
+     * @param source The source identifier.
+     * @param sourceId The user identifier (from the source).
+     * @param referenceId The reference id of the item the user belongs to
+     * @param referenceType The reference type of the item the user belongs to (ENVIRONMENT, ORGANIZATION)
+     * @return Option user found
+     */
+    Optional<User> findBySource(String source, String sourceId, String referenceId, UserReferenceType referenceType)
+        throws TechnicalException;
 
-	/**
-	 * Find a {@link User} by its source and user ID.
-	 *
-	 * @param source The source identifier.
-	 * @param sourceId The user identifier (from the source).
-	 * @param referenceId The reference id of the item the user belongs to
-	 * @param referenceType The reference type of the item the user belongs to (ENVIRONMENT, ORGANIZATION)
-	 * @return Option user found
-	 */
-	Optional<User> findBySource(String source, String sourceId, String referenceId, UserReferenceType referenceType) throws TechnicalException;
+    /**
+     * Find a {@link User} by its email.
+     *
+     * @param email The email to search
+     * @param referenceId The reference id of the item the user belongs to
+     * @param referenceType The reference type of the item the user belongs to (ENVIRONMENT, ORGANIZATION)
+     * @return
+     * @throws TechnicalException
+     */
+    Optional<User> findByEmail(String email, String referenceId, UserReferenceType referenceType) throws TechnicalException;
 
-	/**
-	 * Find a {@link User} by its email.
-	 *
-	 * @param email The email to search
-	 * @param referenceId The reference id of the item the user belongs to
-	 * @param referenceType The reference type of the item the user belongs to (ENVIRONMENT, ORGANIZATION)
-	 * @return
-	 * @throws TechnicalException
-	 */
-	Optional<User> findByEmail(String email, String referenceId, UserReferenceType referenceType) throws TechnicalException;
+    /**
+     * Find a list of {@link User} by IDs
+     *
+     * @param ids Identifier of the searched users
+     * @return list of users found
+     */
+    Set<User> findByIds(List<String> ids) throws TechnicalException;
 
-	/**
-	 * Find a list of {@link User} by IDs
-	 *
-	 * @param ids Identifier of the searched users
-	 * @return list of users found
-	 */
-	Set<User> findByIds(List<String> ids) throws TechnicalException;
-
-	/**
-	 * search {@link User}s
-	 *
-	 * @return Users found
-	 */
-	Page<User> search(UserCriteria criteria, Pageable pageable) throws TechnicalException;
+    /**
+     * search {@link User}s
+     *
+     * @return Users found
+     */
+    Page<User> search(UserCriteria criteria, Pageable pageable) throws TechnicalException;
 }

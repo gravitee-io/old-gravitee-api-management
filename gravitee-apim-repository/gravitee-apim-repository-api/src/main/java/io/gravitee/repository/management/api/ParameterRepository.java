@@ -15,12 +15,11 @@
  */
 package io.gravitee.repository.management.api;
 
-import java.util.List;
-import java.util.Optional;
-
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.management.model.Parameter;
 import io.gravitee.repository.management.model.ParameterReferenceType;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * @author Azize ELAMRANI (azize.elamrani at graviteesource.com)
@@ -28,7 +27,6 @@ import io.gravitee.repository.management.model.ParameterReferenceType;
  * @author GraviteeSource Team
  */
 public interface ParameterRepository {
-    
     Optional<Parameter> findById(String key) throws TechnicalException;
 
     Parameter create(Parameter item) throws TechnicalException;
@@ -36,9 +34,9 @@ public interface ParameterRepository {
     Parameter update(Parameter item) throws TechnicalException;
 
     void delete(String key) throws TechnicalException;
-    
+
     List<Parameter> findAll(List<String> keys) throws TechnicalException;
-    
-    List<Parameter> findAllByReferenceIdAndReferenceType(List<String> keys, String referenceId, ParameterReferenceType referenceType) throws TechnicalException;
-    
+
+    List<Parameter> findAllByReferenceIdAndReferenceType(List<String> keys, String referenceId, ParameterReferenceType referenceType)
+        throws TechnicalException;
 }

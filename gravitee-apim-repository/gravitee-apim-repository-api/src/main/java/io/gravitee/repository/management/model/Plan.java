@@ -25,8 +25,14 @@ import java.util.Set;
  * @author GraviteeSource Team
  */
 public class Plan {
+
     public enum AuditEvent implements Audit.ApiAuditEvent {
-        PLAN_CREATED, PLAN_UPDATED, PLAN_DELETED, PLAN_PUBLISHED, PLAN_CLOSED, PLAN_DEPRECATED
+        PLAN_CREATED,
+        PLAN_UPDATED,
+        PLAN_DELETED,
+        PLAN_PUBLISHED,
+        PLAN_CLOSED,
+        PLAN_DEPRECATED,
     }
 
     private String id;
@@ -103,8 +109,7 @@ public class Plan {
 
     private Set<String> tags = new HashSet<>();
 
-    public Plan() {
-    }
+    public Plan() {}
 
     public Plan(Plan cloned) {
         this.id = cloned.getId();
@@ -127,7 +132,6 @@ public class Plan {
         this.selectionRule = cloned.getSelectionRule();
         this.tags = cloned.getTags();
     }
-
 
     public String getId() {
         return id;
@@ -322,15 +326,28 @@ public class Plan {
 
     @Override
     public String toString() {
-        return "Plan{" +
-                "id='" + id + '\'' +
-                ", api='" + api + '\'' +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", validation=" + validation +
-                ", excludedGroups=" + excludedGroups +
-                ", type=" + type +
-                '}';
+        return (
+            "Plan{" +
+            "id='" +
+            id +
+            '\'' +
+            ", api='" +
+            api +
+            '\'' +
+            ", name='" +
+            name +
+            '\'' +
+            ", description='" +
+            description +
+            '\'' +
+            ", validation=" +
+            validation +
+            ", excludedGroups=" +
+            excludedGroups +
+            ", type=" +
+            type +
+            '}'
+        );
     }
 
     public enum PlanType {
@@ -342,7 +359,7 @@ public class Plan {
         /**
          * A plan for a bunch of APIs.
          */
-        CATALOG
+        CATALOG,
     }
 
     public enum PlanSecurityType {
@@ -364,7 +381,7 @@ public class Plan {
         /**
          * Plan which is using a JWT security authentication type for incoming HTTP requests.
          */
-        JWT
+        JWT,
     }
 
     public enum PlanValidationType {
@@ -376,7 +393,7 @@ public class Plan {
         /**
          * Subscription requires a human validation.
          */
-        MANUAL
+        MANUAL,
     }
 
     public enum Status {
@@ -398,6 +415,6 @@ public class Plan {
         /**
          * Plan is deprecated
          */
-        DEPRECATED
+        DEPRECATED,
     }
 }

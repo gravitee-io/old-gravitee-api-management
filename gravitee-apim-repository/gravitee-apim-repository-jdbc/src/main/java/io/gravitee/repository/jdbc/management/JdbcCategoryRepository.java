@@ -15,21 +15,19 @@
  */
 package io.gravitee.repository.jdbc.management;
 
-import java.sql.Types;
-import java.util.*;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
+import static io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration.escapeReservedWord;
 
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
 import io.gravitee.repository.management.api.CategoryRepository;
 import io.gravitee.repository.management.model.Category;
-
-import static io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration.escapeReservedWord;
+import java.sql.Types;
+import java.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
 
 /**
  *
@@ -43,27 +41,29 @@ public class JdbcCategoryRepository implements CategoryRepository {
     @Autowired
     protected JdbcTemplate jdbcTemplate;
 
-    private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(Category.class, "categories", "id")
-            .addColumn("id", Types.NVARCHAR, String.class)
-            .addColumn("environment_id", Types.NVARCHAR, String.class)
-            .addColumn("key", Types.NVARCHAR, String.class)
-            .addColumn("name", Types.NVARCHAR, String.class)
-            .addColumn("description", Types.NVARCHAR, String.class)
-            .addColumn("hidden", Types.BIT, boolean.class)
-            .addColumn("order", Types.INTEGER, int.class)
-            .addColumn("highlight_api", Types.NVARCHAR, String.class)
-            .addColumn("picture", Types.NVARCHAR, String.class)
-            .addColumn("created_at", Types.TIMESTAMP, Date.class)
-            .addColumn("updated_at", Types.TIMESTAMP, Date.class)
-            .build();
+    private static final JdbcObjectMapper ORM = JdbcObjectMapper
+        .builder(Category.class, "categories", "id")
+        .addColumn("id", Types.NVARCHAR, String.class)
+        .addColumn("environment_id", Types.NVARCHAR, String.class)
+        .addColumn("key", Types.NVARCHAR, String.class)
+        .addColumn("name", Types.NVARCHAR, String.class)
+        .addColumn("description", Types.NVARCHAR, String.class)
+        .addColumn("hidden", Types.BIT, boolean.class)
+        .addColumn("order", Types.INTEGER, int.class)
+        .addColumn("highlight_api", Types.NVARCHAR, String.class)
+        .addColumn("picture", Types.NVARCHAR, String.class)
+        .addColumn("created_at", Types.TIMESTAMP, Date.class)
+        .addColumn("updated_at", Types.TIMESTAMP, Date.class)
+        .build();
 
     @Override
     public Set<Category> findAllByEnvironment(String environmentId) throws TechnicalException {
         LOGGER.debug("JdbcCategoryRepository.findAllByEnvironment({})", environmentId);
         try {
-            List<Category> categories = jdbcTemplate.query("select * from categories where environment_id = ?"
-                    , ORM.getRowMapper()
-                    , environmentId
+            List<Category> categories = jdbcTemplate.query(
+                "select * from categories where environment_id = ?",
+                ORM.getRowMapper(),
+                environmentId
             );
             return new HashSet<>(categories);
         } catch (final Exception ex) {
@@ -76,10 +76,7 @@ public class JdbcCategoryRepository implements CategoryRepository {
     public Optional<Category> findById(String id) throws TechnicalException {
         LOGGER.debug("JdbcCategoryRepository.findById({})", id);
         try {
-            List<Category> items = jdbcTemplate.query("select * from categories where id = ?"
-                    , ORM.getRowMapper()
-                    , id
-            );
+            List<Category> items = jdbcTemplate.query("select * from categories where id = ?", ORM.getRowMapper(), id);
             return items.stream().findFirst();
         } catch (final Exception ex) {
             LOGGER.error("Failed to find categories items by id : {} ", id, ex);
@@ -106,38 +103,44 @@ public class JdbcCategoryRepository implements CategoryRepository {
             throw new IllegalStateException("Unable to update null item");
         }
         try {
-            int rows = jdbcTemplate.update("update categories set "
-                                        + " id = ?"
-                                        + " , environment_id = ?"
-                                        + " , " + escapeReservedWord("key") + " = ?"
-                                        + " , name = ?"
-                                        + " , description = ?"
-                                        + " , hidden = ?"
-                                        + " , " + escapeReservedWord("order") + " = ?"
-                                        + " , highlight_api = ?"
-                                        + " , picture = ?"
-                                        + " , created_at = ? "
-                                        + " , updated_at = ? "
-                                        + " where "
-                                        + " id = ? "
-                                        + " and environment_id = ? "
-
-                                , item.getId()
-                                , item.getEnvironmentId()
-                                , item.getKey()
-                                , item.getName()
-                                , item.getDescription()
-                                , item.isHidden()
-                                , item.getOrder()
-                                , item.getHighlightApi()
-                                , item.getPicture()
-                                , item.getCreatedAt()
-                                , item.getUpdatedAt()
-                                , item.getId()
-                                , item.getEnvironmentId()
-                        );
+            int rows = jdbcTemplate.update(
+                "update categories set " +
+                " id = ?" +
+                " , environment_id = ?" +
+                " , " +
+                escapeReservedWord("key") +
+                " = ?" +
+                " , name = ?" +
+                " , description = ?" +
+                " , hidden = ?" +
+                " , " +
+                escapeReservedWord("order") +
+                " = ?" +
+                " , highlight_api = ?" +
+                " , picture = ?" +
+                " , created_at = ? " +
+                " , updated_at = ? " +
+                " where " +
+                " id = ? " +
+                " and environment_id = ? ",
+                item.getId(),
+                item.getEnvironmentId(),
+                item.getKey(),
+                item.getName(),
+                item.getDescription(),
+                item.isHidden(),
+                item.getOrder(),
+                item.getHighlightApi(),
+                item.getPicture(),
+                item.getCreatedAt(),
+                item.getUpdatedAt(),
+                item.getId(),
+                item.getEnvironmentId()
+            );
             if (rows == 0) {
-                throw new IllegalStateException("Unable to update categories " + item.getId() + " for the environment " + item.getEnvironmentId());
+                throw new IllegalStateException(
+                    "Unable to update categories " + item.getId() + " for the environment " + item.getEnvironmentId()
+                );
             } else {
                 return findById(item.getId()).orElse(null);
             }
@@ -158,7 +161,6 @@ public class JdbcCategoryRepository implements CategoryRepository {
             LOGGER.error("Failed to delete categories item:", ex);
             throw new TechnicalException("Failed to delete categories item", ex);
         }
-        
     }
 
     @Override
@@ -172,14 +174,20 @@ public class JdbcCategoryRepository implements CategoryRepository {
             throw new TechnicalException("Failed to find all categories items", ex);
         }
     }
-    
+
     @Override
     public Optional<Category> findByKey(String key, String environment) throws TechnicalException {
         LOGGER.debug("JdbcCategoryRepository.findByKey({},{})", key, environment);
         try {
-            final Optional<Category> category = jdbcTemplate.query(
-                    "select * from categories where " + escapeReservedWord("key") + " = ? and environment_id = ?", ORM.getRowMapper(), key, environment)
-                    .stream().findFirst();
+            final Optional<Category> category = jdbcTemplate
+                .query(
+                    "select * from categories where " + escapeReservedWord("key") + " = ? and environment_id = ?",
+                    ORM.getRowMapper(),
+                    key,
+                    environment
+                )
+                .stream()
+                .findFirst();
             return category;
         } catch (final Exception ex) {
             final String error = "Failed to find category by key " + key;

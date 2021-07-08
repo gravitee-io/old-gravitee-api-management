@@ -15,16 +15,15 @@
  */
 package io.gravitee.repository;
 
+import static io.gravitee.repository.utils.DateUtils.compareDate;
+import static org.junit.Assert.*;
+
 import io.gravitee.repository.config.AbstractRepositoryTest;
 import io.gravitee.repository.exceptions.TechnicalException;
 import io.gravitee.repository.management.model.Page;
 import io.gravitee.repository.management.model.PageReferenceType;
-import org.junit.Test;
-
 import java.util.*;
-
-import static io.gravitee.repository.utils.DateUtils.compareDate;
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 /**
  * @author Nicolas GERAUD (nicolas.geraud at graviteesource.com)
@@ -365,7 +364,10 @@ public class PageRepositoryTest extends AbstractRepositoryTest {
 
     @Test
     public void shouldFindDefaultMaxApiPageOrderByApiId() throws TechnicalException {
-        Integer maxApiPageOrderByApiId = pageRepository.findMaxPageReferenceIdAndReferenceTypeOrder("unknown api id", PageReferenceType.API);
+        Integer maxApiPageOrderByApiId = pageRepository.findMaxPageReferenceIdAndReferenceTypeOrder(
+            "unknown api id",
+            PageReferenceType.API
+        );
         assertEquals(Integer.valueOf(0), maxApiPageOrderByApiId);
     }
 

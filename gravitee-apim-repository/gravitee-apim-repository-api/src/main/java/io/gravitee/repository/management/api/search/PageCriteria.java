@@ -22,6 +22,7 @@ import java.util.Objects;
  * @author GraviteeSource Team
  */
 public class PageCriteria {
+
     private String referenceId;
     private String referenceType;
     private String name;
@@ -31,27 +32,32 @@ public class PageCriteria {
     private String parent;
     private Boolean rootParent;
 
-
     private PageCriteria() {}
 
     public String getReferenceId() {
         return referenceId;
     }
+
     public String getName() {
         return name;
     }
+
     public String getType() {
         return type;
     }
+
     public Boolean getHomepage() {
         return homepage;
     }
+
     public Boolean getPublished() {
         return published;
     }
+
     public String getParent() {
         return parent;
     }
+
     public Boolean getRootParent() {
         return rootParent;
     }
@@ -67,21 +73,27 @@ public class PageCriteria {
     private void setReferenceId(String referenceId) {
         this.referenceId = referenceId;
     }
+
     private void setName(String name) {
         this.name = name;
     }
+
     private void setType(String type) {
         this.type = type;
     }
+
     private void setHomepage(Boolean homepage) {
         this.homepage = homepage;
     }
+
     private void setPublished(Boolean published) {
         this.published = published;
     }
+
     private void setParent(String parent) {
         this.parent = parent;
     }
+
     public void setRootParent(Boolean rootParent) {
         this.rootParent = rootParent;
     }
@@ -91,14 +103,16 @@ public class PageCriteria {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PageCriteria that = (PageCriteria) o;
-        return Objects.equals(referenceId, that.referenceId) &&
+        return (
+            Objects.equals(referenceId, that.referenceId) &&
             Objects.equals(referenceType, that.referenceType) &&
             Objects.equals(name, that.name) &&
             Objects.equals(type, that.type) &&
             Objects.equals(homepage, that.homepage) &&
             Objects.equals(published, that.published) &&
             Objects.equals(parent, that.parent) &&
-            Objects.equals(rootParent, that.rootParent);
+            Objects.equals(rootParent, that.rootParent)
+        );
     }
 
     @Override

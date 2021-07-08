@@ -15,119 +15,143 @@
  */
 package io.gravitee.repository.mongodb.management.internal.model;
 
+import java.util.Objects;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Objects;
 
 /**
  * @author Azize ELAMRANI (azize.elamrani at graviteesource.com)
  * @author GraviteeSource Team
  */
 @Document(collection = "categories")
-public class CategoryMongo extends Auditable{
+public class CategoryMongo extends Auditable {
 
-	@Id
-	private String id;
-	private String key;
-	private String name;
+    @Id
+    private String id;
+
+    private String key;
+    private String name;
     private String environmentId;
-	private String description;
-	private boolean hidden;
-	private int order;
-	private String highlightApi;
-	private String picture;
+    private String description;
+    private boolean hidden;
+    private int order;
+    private String highlightApi;
+    private String picture;
 
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getKey() {
-		return key;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public String getEnvironmentId() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEnvironmentId() {
         return environmentId;
     }
+
     public void setEnvironmentId(String environmentId) {
         this.environmentId = environmentId;
     }
-    
+
     public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
+        return description;
+    }
 
-	public boolean isHidden() {
-		return hidden;
-	}
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public int getOrder() {
-		return order;
-	}
-	public void setOrder(int order) {
-		this.order = order;
-	}
+    public boolean isHidden() {
+        return hidden;
+    }
 
-	public String getHighlightApi() {
-		return highlightApi;
-	}
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
 
-	public void setHighlightApi(String highlightApi) {
-		this.highlightApi = highlightApi;
-	}
+    public int getOrder() {
+        return order;
+    }
 
-	public String getPicture() {
-		return picture;
-	}
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-	public void setPicture(String picture) {
-		this.picture = picture;
-	}
+    public String getHighlightApi() {
+        return highlightApi;
+    }
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (!(o instanceof CategoryMongo)) return false;
-		CategoryMongo categoryMongo = (CategoryMongo) o;
-		return Objects.equals(id, categoryMongo.id);
-	}
+    public void setHighlightApi(String highlightApi) {
+        this.highlightApi = highlightApi;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
+    public String getPicture() {
+        return picture;
+    }
 
-	@Override
-	public String toString() {
-		return "CategoryMongo{" +
-				"id='" + id + '\'' +
-				", key='" + key + '\'' +
-				", name='" + name + '\'' +
-				", environmentId='" + environmentId + '\'' +
-				", description='" + description + '\'' +
-				", hidden='" + hidden + '\'' +
-				", order='" + order + '\'' +
-				", highlightApi='" + highlightApi + '\'' +
-				'}';
-	}
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CategoryMongo)) return false;
+        CategoryMongo categoryMongo = (CategoryMongo) o;
+        return Objects.equals(id, categoryMongo.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return (
+            "CategoryMongo{" +
+            "id='" +
+            id +
+            '\'' +
+            ", key='" +
+            key +
+            '\'' +
+            ", name='" +
+            name +
+            '\'' +
+            ", environmentId='" +
+            environmentId +
+            '\'' +
+            ", description='" +
+            description +
+            '\'' +
+            ", hidden='" +
+            hidden +
+            '\'' +
+            ", order='" +
+            order +
+            '\'' +
+            ", highlightApi='" +
+            highlightApi +
+            '\'' +
+            '}'
+        );
+    }
 }

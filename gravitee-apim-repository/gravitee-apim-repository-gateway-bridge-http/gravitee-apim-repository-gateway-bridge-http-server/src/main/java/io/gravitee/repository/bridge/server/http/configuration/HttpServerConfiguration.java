@@ -60,11 +60,10 @@ public class HttpServerConfiguration {
     }
 
     public String getAuthenticationType() {
-      return authenticationType;
+        return authenticationType;
     }
 
     public void setAuthenticationType(String authenticationType) {
-      this.authenticationType = authenticationType;
+        this.authenticationType = authenticationType;
     }
-
 }

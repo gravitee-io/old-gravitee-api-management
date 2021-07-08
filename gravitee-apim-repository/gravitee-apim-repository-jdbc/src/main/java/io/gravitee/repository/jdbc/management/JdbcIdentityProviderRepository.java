@@ -18,6 +18,16 @@ package io.gravitee.repository.jdbc.management;
 import static io.gravitee.repository.jdbc.common.AbstractJdbcRepositoryConfiguration.escapeReservedWord;
 import static io.gravitee.repository.jdbc.orm.JdbcColumn.getDBName;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.gravitee.repository.exceptions.TechnicalException;
+import io.gravitee.repository.jdbc.orm.JdbcColumn;
+import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
+import io.gravitee.repository.management.api.IdentityProviderRepository;
+import io.gravitee.repository.management.model.IdentityProvider;
+import io.gravitee.repository.management.model.IdentityProviderReferenceType;
+import io.gravitee.repository.management.model.IdentityProviderType;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.sql.Connection;
@@ -33,7 +43,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiConsumer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,18 +50,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.gravitee.repository.exceptions.TechnicalException;
-import io.gravitee.repository.jdbc.orm.JdbcColumn;
-import io.gravitee.repository.jdbc.orm.JdbcObjectMapper;
-import io.gravitee.repository.management.api.IdentityProviderRepository;
-import io.gravitee.repository.management.model.IdentityProvider;
-import io.gravitee.repository.management.model.IdentityProviderReferenceType;
-import io.gravitee.repository.management.model.IdentityProviderType;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -65,26 +62,28 @@ public class JdbcIdentityProviderRepository implements IdentityProviderRepositor
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    
-    private final static ObjectMapper JSON_MAPPER = new ObjectMapper();
+
+    private static final ObjectMapper JSON_MAPPER = new ObjectMapper();
 
     private final Rm mapper = new Rm();
 
-    private static final JdbcObjectMapper ORM = JdbcObjectMapper.builder(IdentityProvider.class, "identity_providers", "id")
-            .addColumn("id", Types.NVARCHAR, String.class)
-            .addColumn("reference_id", Types.NVARCHAR, String.class)
-            .addColumn("reference_type", Types.NVARCHAR, IdentityProviderReferenceType.class)
-            .addColumn("name", Types.NVARCHAR, String.class)
-            .addColumn("description", Types.NVARCHAR, String.class)
-            .addColumn("type", Types.NVARCHAR, IdentityProviderType.class)
-            .addColumn("enabled", Types.BOOLEAN, boolean.class)
-            .addColumn("email_required", Types.BOOLEAN, Boolean.class)
-            .addColumn("sync_mappings", Types.BOOLEAN, Boolean.class)
-            .addColumn("created_at", Types.TIMESTAMP, Date.class)
-            .addColumn("updated_at", Types.TIMESTAMP, Date.class)
-            .build();
+    private static final JdbcObjectMapper ORM = JdbcObjectMapper
+        .builder(IdentityProvider.class, "identity_providers", "id")
+        .addColumn("id", Types.NVARCHAR, String.class)
+        .addColumn("reference_id", Types.NVARCHAR, String.class)
+        .addColumn("reference_type", Types.NVARCHAR, IdentityProviderReferenceType.class)
+        .addColumn("name", Types.NVARCHAR, String.class)
+        .addColumn("description", Types.NVARCHAR, String.class)
+        .addColumn("type", Types.NVARCHAR, IdentityProviderType.class)
+        .addColumn("enabled", Types.BOOLEAN, boolean.class)
+        .addColumn("email_required", Types.BOOLEAN, Boolean.class)
+        .addColumn("sync_mappings", Types.BOOLEAN, Boolean.class)
+        .addColumn("created_at", Types.TIMESTAMP, Date.class)
+        .addColumn("updated_at", Types.TIMESTAMP, Date.class)
+        .build();
 
     private class Rm implements RowMapper<IdentityProvider> {
+
         @Override
         public IdentityProvider mapRow(ResultSet rs, int i) throws SQLException {
             IdentityProvider identityProvider = new IdentityProvider();
@@ -99,27 +98,26 @@ public class JdbcIdentityProviderRepository implements IdentityProviderRepositor
         }
 
         private <T, C> Map<String, T> convert(String sMap, Class<C> valueType, boolean array) {
-            TypeReference<HashMap<String, T>> typeRef
-                    = new TypeReference<HashMap<String, T>>() {};
-            if (sMap != null && ! sMap.isEmpty()) {
+            TypeReference<HashMap<String, T>> typeRef = new TypeReference<HashMap<String, T>>() {};
+            if (sMap != null && !sMap.isEmpty()) {
                 try {
                     HashMap<String, Object> value = (HashMap<String, Object>) JSON_MAPPER.readValue(sMap, typeRef);
                     if (array) {
-                        value
-                                .forEach(new BiConsumer<String, Object>() {
-                                    @Override
-                                    public void accept(String s, Object t) {
-                                        List<C> list = (List<C>) t;
-                                        C[] arr = (C[]) Array.newInstance(valueType, list.size());
-                                        arr = list.toArray(arr);
-                                        value.put(s, arr);
-                                    }
-                                });
+                        value.forEach(
+                            new BiConsumer<String, Object>() {
+                                @Override
+                                public void accept(String s, Object t) {
+                                    List<C> list = (List<C>) t;
+                                    C[] arr = (C[]) Array.newInstance(valueType, list.size());
+                                    arr = list.toArray(arr);
+                                    value.put(s, arr);
+                                }
+                            }
+                        );
                     }
 
                     return (Map<String, T>) value;
-                } catch (IOException e) {
-                }
+                } catch (IOException e) {}
             }
 
             return null;
@@ -160,8 +158,7 @@ public class JdbcIdentityProviderRepository implements IdentityProviderRepositor
             if (object != null) {
                 try {
                     return JSON_MAPPER.writeValueAsString(object);
-                } catch (JsonProcessingException e) {
-                }
+                } catch (JsonProcessingException e) {}
             }
 
             return null;
@@ -235,7 +232,13 @@ public class JdbcIdentityProviderRepository implements IdentityProviderRepositor
     }
 
     protected PreparedStatementCreator buildUpdatePreparedStatementCreator(IdentityProvider identityProvider) {
-        return new Psc(UPDATE_SQL, identityProvider, identityProvider.getId(), identityProvider.getReferenceId(), identityProvider.getReferenceType().name());
+        return new Psc(
+            UPDATE_SQL,
+            identityProvider,
+            identityProvider.getId(),
+            identityProvider.getReferenceId(),
+            identityProvider.getReferenceType().name()
+        );
     }
 
     protected PreparedStatementCreator buildInsertPreparedStatementCreator(IdentityProvider identityProvider) {
@@ -288,26 +291,24 @@ public class JdbcIdentityProviderRepository implements IdentityProviderRepositor
     }
 
     @Override
-    public void delete(String id)
-            throws TechnicalException {
+    public void delete(String id) throws TechnicalException {
         LOGGER.debug("JdbcIdentityProviderRepository<{}>.delete({})", getOrm().getTableName(), id);
         try {
             jdbcTemplate.update("delete from identity_providers where id = ?", id);
-            
         } catch (final Exception ex) {
             LOGGER.error("Failed to delete {} identityProvider:", getOrm().getTableName(), ex);
             throw new TechnicalException("Failed to delete " + getOrm().getTableName() + " identityProvider", ex);
         }
-        
     }
 
     @Override
     public Optional<IdentityProvider> findById(String id) throws TechnicalException {
         LOGGER.debug("JdbcIdentityProviderRepository<{}>.findById({})", getOrm().getTableName(), id);
         try {
-            List<IdentityProvider> identityProviders = jdbcTemplate.query("select * from identity_providers where id = ?"
-                    , getRowMapper()
-                    , id
+            List<IdentityProvider> identityProviders = jdbcTemplate.query(
+                "select * from identity_providers where id = ?",
+                getRowMapper(),
+                id
             );
             return identityProviders.stream().findFirst();
         } catch (final Exception ex) {
@@ -317,14 +318,20 @@ public class JdbcIdentityProviderRepository implements IdentityProviderRepositor
     }
 
     @Override
-    public Set<IdentityProvider> findAllByReferenceIdAndReferenceType(String referenceId,
-            IdentityProviderReferenceType referenceType) throws TechnicalException {
-        LOGGER.debug("JdbcIdentityProviderRepository<{}>.findAllByReferenceIdAndReferenceType({}, {})", getOrm().getTableName(), referenceId, referenceType);
+    public Set<IdentityProvider> findAllByReferenceIdAndReferenceType(String referenceId, IdentityProviderReferenceType referenceType)
+        throws TechnicalException {
+        LOGGER.debug(
+            "JdbcIdentityProviderRepository<{}>.findAllByReferenceIdAndReferenceType({}, {})",
+            getOrm().getTableName(),
+            referenceId,
+            referenceType
+        );
         try {
-            List<IdentityProvider> identityProviders = jdbcTemplate.query("select * from identity_providers where reference_id = ? and reference_type = ?"
-                    , getRowMapper()
-                    , referenceId
-                    , referenceType.name()
+            List<IdentityProvider> identityProviders = jdbcTemplate.query(
+                "select * from identity_providers where reference_id = ? and reference_type = ?",
+                getRowMapper(),
+                referenceId,
+                referenceType.name()
             );
             return new HashSet<>(identityProviders);
         } catch (final Exception ex) {

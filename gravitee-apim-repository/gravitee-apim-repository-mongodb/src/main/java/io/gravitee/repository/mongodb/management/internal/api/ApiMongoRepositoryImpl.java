@@ -15,21 +15,20 @@
  */
 package io.gravitee.repository.mongodb.management.internal.api;
 
+import static org.springframework.data.domain.Sort.Direction.ASC;
+import static org.springframework.data.mongodb.core.query.Criteria.where;
+
 import io.gravitee.common.data.domain.Page;
 import io.gravitee.repository.management.api.search.ApiCriteria;
 import io.gravitee.repository.management.api.search.ApiFieldExclusionFilter;
 import io.gravitee.repository.management.api.search.Pageable;
 import io.gravitee.repository.mongodb.management.internal.model.ApiMongo;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
-
-import java.util.List;
-
-import static org.springframework.data.domain.Sort.Direction.ASC;
-import static org.springframework.data.mongodb.core.query.Criteria.where;
 
 /**
  * @author Azize ELAMRANI (azize.elamrani at graviteesource.com)
@@ -41,8 +40,11 @@ public class ApiMongoRepositoryImpl implements ApiMongoRepositoryCustom {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public Page<ApiMongo> search(final ApiCriteria criteria, final Pageable pageable,
-                                 final ApiFieldExclusionFilter apiFieldExclusionFilter) {
+    public Page<ApiMongo> search(
+        final ApiCriteria criteria,
+        final Pageable pageable,
+        final ApiFieldExclusionFilter apiFieldExclusionFilter
+    ) {
         final Query query = new Query();
 
         if (apiFieldExclusionFilter != null) {
@@ -96,9 +98,6 @@ public class ApiMongoRepositoryImpl implements ApiMongoRepositoryCustom {
         List<ApiMongo> apis = mongoTemplate.find(query, ApiMongo.class);
         long total = mongoTemplate.count(query, ApiMongo.class);
 
-        return new Page<>(apis,
-                pageable != null ? pageable.pageNumber() : 0,
-                pageable != null ? pageable.pageSize() : 0,
-                total);
+        return new Page<>(apis, pageable != null ? pageable.pageNumber() : 0, pageable != null ? pageable.pageSize() : 0, total);
     }
 }

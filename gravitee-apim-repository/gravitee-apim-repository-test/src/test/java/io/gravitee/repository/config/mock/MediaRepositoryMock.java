@@ -15,22 +15,21 @@
  */
 package io.gravitee.repository.config.mock;
 
-import io.gravitee.repository.media.api.MediaRepository;
-import io.gravitee.repository.media.model.Media;
-import org.aopalliance.intercept.Invocation;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.mockito.stubbing.OngoingStubbing;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import io.gravitee.repository.media.api.MediaRepository;
+import io.gravitee.repository.media.model.Media;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import org.aopalliance.intercept.Invocation;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
+import org.mockito.stubbing.OngoingStubbing;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -71,17 +70,13 @@ public class MediaRepositoryMock extends AbstractRepositoryMock<MediaRepository>
 
         when(mediaRepository.create(any(Media.class))).thenReturn(mediaData);
 
-        when(mediaRepository.findByHash("4692FBACBEF919061ECF328CA543E028", "image"))
-            .thenReturn(of(mediaData));
+        when(mediaRepository.findByHash("4692FBACBEF919061ECF328CA543E028", "image")).thenReturn(of(mediaData));
 
-        when(mediaRepository.findByHashAndApi("77C921AB285376AFF72FBDD2D0784E0B", "apiId", "image"))
-            .thenReturn(of(mediaData3));
+        when(mediaRepository.findByHashAndApi("77C921AB285376AFF72FBDD2D0784E0B", "apiId", "image")).thenReturn(of(mediaData3));
 
-        when(mediaRepository.findByHash("1BC5D9656D860DE678CBEF5C169D8B15", "image"))
-            .thenReturn(of(mediaData2), empty());
+        when(mediaRepository.findByHash("1BC5D9656D860DE678CBEF5C169D8B15", "image")).thenReturn(of(mediaData2), empty());
 
-        when(mediaRepository.findByHash("1BC5D9656D860DE678CBEF5C169D8B152", "image"))
-            .thenReturn(of(mediaData2), empty());
+        when(mediaRepository.findByHash("1BC5D9656D860DE678CBEF5C169D8B152", "image")).thenReturn(of(mediaData2), empty());
 
         List<Media> all = new ArrayList<>();
         for (int i = 0; i < 2; i++) {

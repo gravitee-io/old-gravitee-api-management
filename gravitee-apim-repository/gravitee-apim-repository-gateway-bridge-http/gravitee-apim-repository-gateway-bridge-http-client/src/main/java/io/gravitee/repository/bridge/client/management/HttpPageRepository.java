@@ -20,11 +20,10 @@ import io.gravitee.repository.management.api.PageRepository;
 import io.gravitee.repository.management.api.search.PageCriteria;
 import io.gravitee.repository.management.model.Page;
 import io.gravitee.repository.management.model.PageReferenceType;
-import org.springframework.stereotype.Component;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.stereotype.Component;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -60,7 +59,7 @@ public class HttpPageRepository extends AbstractRepository implements PageReposi
 
     @Override
     public Integer findMaxPageReferenceIdAndReferenceTypeOrder(String referenceId, PageReferenceType referenceType)
-            throws TechnicalException {
+        throws TechnicalException {
         throw new IllegalStateException();
     }
 }
