@@ -23,8 +23,8 @@ RUN apk add --update zip unzip
 
 RUN echo $GRAVITEEAPIM_VERSION
 
-ADD ./gravitee-rest-api-standalone-${GRAVITEEAPIM_VERSION}.zip /tmp/
-RUN unzip /tmp/gravitee-rest-api-standalone-${GRAVITEEAPIM_VERSION}.zip -d /tmp/
+ADD ./gravitee-apim-management-api-standalone-${GRAVITEEAPIM_VERSION}.zip /tmp/
+RUN unzip /tmp/gravitee-apim-management-api-standalone-${GRAVITEEAPIM_VERSION}.zip -d /tmp/
 
 FROM adoptopenjdk/openjdk11:jre-11.0.10_9-alpine
 MAINTAINER Gravitee Team <http://gravitee.io>
@@ -33,7 +33,7 @@ RUN apk add --update curl
 
 ENV GRAVITEEAPIM_HOME /opt/graviteeio-management-api
 
-COPY --from=build-env /tmp/gravitee-rest-api-standalone-* ${GRAVITEEAPIM_HOME}/
+COPY --from=build-env /tmp/gravitee-apim-management-api-standalone-* ${GRAVITEEAPIM_HOME}/
 
 RUN chgrp -R 0 ${GRAVITEEAPIM_HOME} && \
     chmod -R g=u ${GRAVITEEAPIM_HOME}
