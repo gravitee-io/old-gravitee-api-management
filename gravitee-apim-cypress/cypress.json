@@ -1,3 +1,6 @@
 {
-    "baseUrl": "http://localhost:8083"
+    "baseUrl": "http://localhost:3000",
+    "env": {
+        "MANAGEMENT_API_URL": "http://localhost:8083"
+    }
 }

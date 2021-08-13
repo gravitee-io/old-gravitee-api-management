@@ -17,14 +17,14 @@ import { testUrls } from "../fixtures/urls";
 import { fakeUserData, createFakeAPI } from "../fixtures/test-data";
 
 const { username, password } = fakeUserData;
-const { managementApi } = testUrls;
+const { managementAPI } = testUrls;
 const fakeAPIData = createFakeAPI();
 
 describe("create API", () => {
     it("should create API", () => {
         cy.request({
             method: "POST",
-            url: `${managementApi}/apis`,
+            url: `${managementAPI}/apis`,
             auth: { user: username, pass: password },
             body: {
                 contextPath: "/" + fakeAPIData.contextPath,

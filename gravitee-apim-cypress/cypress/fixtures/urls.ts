@@ -13,6 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+export const urlSuffix = {
+    loginUrl: "/#!/login",
+    passwordReset: "/password/reset",
+};
 export const testUrls = {
-    managementApi: "http://localhost:8083/management/organizations/DEFAULT/environments/DEFAULT",
+    managementAPI: `${Cypress.env("MANAGEMENT_API_URL")}/management/organizations/DEFAULT/environments/DEFAULT`,
+    // managementApi: "http://localhost:8083/management/organizations/DEFAULT/environments/DEFAULT",
 };
