@@ -1,27 +1,25 @@
-# Opentracing with jaeger
+# Opentracing With Jaeger
 
-Here is a docker-compose to run APIM with Opentracing activated and jaeger as a tracer.
+Enabling OpenTracing on Gravitee APIM is easy -- get started using Jaegar as a tracer with this Docker Compose. 
 
-You can classically call your apis through your gateway, for example: `http://localhost:8082/myapi`.
+With this option enabled, you can continue to call your APIs through your gateway by using the usual host: `http://localhost:8082/myapi`.
 
-## How to run ?
+## How To Run OpenTracing With Jaeger
 
-⚠️ As Jaeger tracer is not bundled by default, do not forget to download the zip file related to the version you want to run.
+⚠️ Since the Jaeger tracer is not bundled by default, **you must download the .ZIP file** for the version you want to run.
 
-The zip is downloadable here: https://download.gravitee.io/#graviteeio-apim/plugins/tracers/gravitee-tracer-jaeger/
+Download the .ZIP here: https://download.gravitee.io/#graviteeio-apim/plugins/tracers/gravitee-tracer-jaeger/. 
 
-Then you have to copy it into `opentracing-jaeger/.plugins` directory
+After downloading, **you must copy this into the `opentracing-jaeger/.plugins` directory using the command below:** 
 
 `APIM_VERSION={APIM_VERSION} docker-compose up -d ` 
 
-To be sure to fetch last version of images, you can do
+Be sure to fetch last version of images by running this command: 
 `export APIM_VERSION={APIM_VERSION} && docker-compose down -v && docker-compose pull && docker-compose up`
 
-## And how to see my traces ?
+## How Can I See My Traces? 
 
-Jaeger comes with an UI, that will allow you to see your calls.
-
-To access this UI, browse to http://localhost:16686.
+Jaeger comes with a helpful, user-friendly UI that will allow you to see your calls. To access this UI, visit http://localhost:16686.
 
 Then select **gio_apim_gateway** in the _Service_ list and click on the _Find Traces_ button.
 
