@@ -229,6 +229,11 @@ public class Api {
         this.environmentId = environmentId;
     }
 
+    // Keep for 1.30.x compatibility
+    public void setEnvironment(String environmentId) {
+        this.environmentId = environmentId;
+    }
+
     public String getPicture() {
         return picture;
     }
