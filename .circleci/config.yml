@@ -33,6 +33,7 @@ orbs:
   slack: circleci/slack@4.2.1
   gravitee: gravitee-io/gravitee@1.0
   secrethub: secrethub/cli@1.1.0
+  gravitee-apim: gravitee-io/gravitee-apim@dev:1.0.4
 
 jobs:
   publish-on-artifactory-and-nexus:
@@ -83,7 +84,7 @@ workflows:
       - gravitee/d_pull_requests_secrets:
           context: cicd-orchestrator
           name: pr_secrets_resolution
-      - gravitee/d_pr_tests_containers_qa:
+      - gravitee-apim/d_pr_tests_containers_qa:
           context: gravitee-qa
           name: process_pull_request_qa
           requires:
