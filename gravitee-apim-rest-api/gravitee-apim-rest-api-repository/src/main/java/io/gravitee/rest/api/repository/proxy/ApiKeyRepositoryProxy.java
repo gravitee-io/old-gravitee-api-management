@@ -31,6 +31,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApiKeyRepositoryProxy extends AbstractProxy<ApiKeyRepository> implements ApiKeyRepository {
 
+    // fake comment
     public Optional<ApiKey> findById(String apiKey) throws TechnicalException {
         return target.findById(apiKey);
     }
