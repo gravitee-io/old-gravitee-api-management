@@ -112,5 +112,17 @@
     },
     "createdAt": 1475280000000,
     "updatedAt": 1475280000000
+  },
+  {
+    "id": "event11",
+    "environments": ["DEFAULT"],
+    "type": "DEBUG_API",
+    "payload": "{}",
+    "parentId": null,
+    "properties": {
+      "api_id": "api-3"
+    },
+    "createdAt": 1474739200000,
+    "updatedAt": 1474739200000
   }
 ]
