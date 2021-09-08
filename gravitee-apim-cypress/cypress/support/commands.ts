@@ -45,9 +45,27 @@ declare namespace Cypress {
          * @example cy.dataCy('greeting')
          */
         gvType(selector: string, value: string): Chainable<Element>;
+
+        /**
+         * Custom command to setup authentication token/cookie to visit directly some pages instead of
+         * going to the login page first
+         *
+         * @param username Username to use for authentication
+         * @param password Password to use for authentication
+         */
+        loginInAPIM(username?: string, password?: string): Chainable<Element>;
     }
 }
 
 Cypress.Commands.add("gvType", (selector, value) => {
     cy.get(selector).within(() => cy.get("input").focus().type(value, { force: true }).trigger("input", { bubbles: true, composed: true }));
+});
+
+Cypress.Commands.add("loginInAPIM", (username: string = "admin", password: string = "admin") => {
+    cy.clearCookie("Auth-Graviteeio-APIM");
+    cy.request({
+        method: "POST",
+        url: `${Cypress.env("MANAGEMENT_API_URL")}/management/organizations/DEFAULT/user/login`,
+        auth: { username, password },
+    });
 });

@@ -29,7 +29,16 @@
 // ***********************************************************
 
 // Import commands.ts using ES2015 syntax:
-import './commands'
+import "./commands";
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+Cypress.Cookies.defaults({ preserve: ["Auth-Graviteeio-APIM"] });
+before(() => {
+    cy.clearCookie("Auth-Graviteeio-APIM");
+});
+
+after(() => {
+    cy.clearCookie("Auth-Graviteeio-APIM");
+});
