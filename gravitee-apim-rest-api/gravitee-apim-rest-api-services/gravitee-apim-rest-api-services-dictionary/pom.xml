@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     Copyright (C) 2015 The Gravitee team (http://gravitee.io)
@@ -33,7 +33,7 @@
     <name>Gravitee.io APIM - Management API - Services - Dictionary</name>
 
     <properties>
-        <jolt.version>0.1.1</jolt.version>
+        <jolt.version>0.1.5</jolt.version>
     </properties>
 
     <dependencies>
