@@ -42,6 +42,7 @@ public class JdbcPropertiesConfiguration {
 
     @Bean
     public static Properties graviteeProperties() {
+        String apiKey = "1234-4567-7890";
         final YamlPropertiesFactoryBean yaml = new YamlPropertiesFactoryBean();
         final Resource yamlResource = new ClassPathResource("graviteeTest.yml");
         yaml.setResources(yamlResource);
