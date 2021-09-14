@@ -70,7 +70,7 @@
         <batik-transcoder.version>1.11</batik-transcoder.version>
         <classgraph.version>4.8.90</classgraph.version>
         <commons-io.version>2.7</commons-io.version>
-        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang.version>20030203.000129</commons-lang.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-pool2.version>2.9.0</commons-pool2.version>
         <commons-text.version>1.9</commons-text.version>
