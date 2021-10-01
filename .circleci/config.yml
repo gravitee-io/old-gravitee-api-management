@@ -564,7 +564,7 @@ workflows:
       - apim/d_apim_package_bundle_secrets:
           context: cicd-orchestrator
           name: package_bundle_secrets_resolution
-      - apim/d_apim_package_bundle_dev:
+      - apim/d_apim_package_bundle_dev_rest:
           name: publishing_image_in_azure_for_test
           requires:
             -  package_bundle_secrets_resolution
