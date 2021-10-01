@@ -17,7 +17,7 @@ commands:
 parameters:
     gio_action:
         type: enum
-    enum: [release, standalone_release, standalone_release_replay, nexus_staging, vm_nexus_staging, pull_requests, env_test]
+        enum: [release, standalone_release, standalone_release_replay, nexus_staging, vm_nexus_staging, pull_requests, env_test]
         default: pull_requests
     dry_run:
         type: boolean
