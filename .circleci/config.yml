@@ -94,6 +94,39 @@ jobs:
       - store_artifacts:
           path: ~/test-results/junit
 
+  test-repository-jdbc:
+    machine:
+      image: ubuntu-2004:202107-02
+    resource_class: xlarge
+    steps:
+      - checkout
+      - run:
+          name: Check if gravitee-apim-repository-jdbc should be built
+          command: |
+            ./.circleci/should_build.sh gravitee-apim-repository/gravitee-apim-repository-jdbc || circleci step halt
+      - attach_workspace:
+          at: .
+      - restore-maven-cache
+      - run:
+          name: Will Run JDBC testing
+          command:
+            echo "YES WE DID"
+    #        - run:
+    #            name: Run tests
+    #            command: |
+    #              # Need to use `package` phase to get repo-test's jar build and shared to mongodb and jdbc repos
+    #              mvn -s .artifactory.settings.xml package --no-transfer-progress -T 2C
+    #        - run:
+    #            name: Save test results
+    #            command: |
+    #              mkdir -p ~/test-results/junit/
+    #              find . -type f -regex ".*/target/surefire-reports/.*xml" -exec cp {} ~/test-results/junit/ \;
+    #            when: always
+    #        - store_test_results:
+    #            path: ~/test-results
+    #        - store_artifacts:
+    #            path: ~/test-results/junit
+
   publish-on-artifactory:
     docker:
       - image: cimg/openjdk:11.0
@@ -247,66 +280,70 @@ workflows:
       - gravitee/d_pull_requests_secrets:
           context: cicd-orchestrator
           name: pr_secrets_resolution
-      - build:
-          context: gravitee-qa
+#      - build:
+#          context: gravitee-qa
+#          requires:
+#            - pr_secrets_resolution
+#      - test:
+#          requires:
+#            - build
+      - test-repository-jdbc:
           requires:
             - pr_secrets_resolution
-      - test:
-          requires:
-            - build
-      - publish-on-artifactory:
-          filters:
-            branches:
-              only:
-                - master
-                - /^\d+\.\d+\.x$/
-          requires:
-            - test
-      - publish-on-nexus:
-          filters:
-            branches:
-              only:
-                - master
-                - /^\d+\.\d+\.x$/
-          requires:
-            - test
-      - publish-images-azure-registry:
-          context: cicd-orchestrator
-          requires:
-            - test
-          pre-steps:
-            - secrethub/env-export:
-                secret-path: graviteeio/cicd/azure/docker-registries/graviteeio/username
-                var-name: AZURE_DOCKER_REGISTRY_USERNAME
-            - secrethub/env-export:
-                secret-path: graviteeio/cicd/azure/docker-registries/graviteeio/password
-                var-name: AZURE_DOCKER_REGISTRY_PASSWORD
-          filters:
-            branches:
-              only:
-                - master
-                - /^\d+\.\d+\.x$/
-                - 6170-deploy-on-apim-cluster
-      - deploy-on-azure-aks:
-          context: cicd-orchestrator
-          pre-steps:
-            - secrethub/env-export:
-                secret-path: graviteeio/cicd/azure/application-id
-                var-name: AZURE_APPLICATION_ID
-            - secrethub/env-export:
-                secret-path: graviteeio/cicd/azure/tenant
-                var-name: AZURE_TENANT
-            - secrethub/env-export:
-                secret-path: graviteeio/cicd/azure/application-secret
-                var-name: AZURE_APPLICATION_SECRET
-          requires:
-            - publish-images-azure-registry
-          filters:
-            branches:
-              only:
-                - master
-                - /^\d+\.\d+\.x$/
-                - 6170-deploy-on-apim-cluster
+#           - build
+#      - publish-on-artifactory:
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - /^\d+\.\d+\.x$/
+#          requires:
+#            - test
+#      - publish-on-nexus:
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - /^\d+\.\d+\.x$/
+#          requires:
+#            - test
+#      - publish-images-azure-registry:
+#          context: cicd-orchestrator
+#          requires:
+#            - test
+#          pre-steps:
+#            - secrethub/env-export:
+#                secret-path: graviteeio/cicd/azure/docker-registries/graviteeio/username
+#                var-name: AZURE_DOCKER_REGISTRY_USERNAME
+#            - secrethub/env-export:
+#                secret-path: graviteeio/cicd/azure/docker-registries/graviteeio/password
+#                var-name: AZURE_DOCKER_REGISTRY_PASSWORD
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - /^\d+\.\d+\.x$/
+#                - 6170-deploy-on-apim-cluster
+#      - deploy-on-azure-aks:
+#          context: cicd-orchestrator
+#          pre-steps:
+#            - secrethub/env-export:
+#                secret-path: graviteeio/cicd/azure/application-id
+#                var-name: AZURE_APPLICATION_ID
+#            - secrethub/env-export:
+#                secret-path: graviteeio/cicd/azure/tenant
+#                var-name: AZURE_TENANT
+#            - secrethub/env-export:
+#                secret-path: graviteeio/cicd/azure/application-secret
+#                var-name: AZURE_APPLICATION_SECRET
+#          requires:
+#            - publish-images-azure-registry
+#          filters:
+#            branches:
+#              only:
+#                - master
+#                - /^\d+\.\d+\.x$/
+#                - 6170-deploy-on-apim-cluster
 
   # ---
   # The 2 Workflows Below are there for the CICD Orchestrator to be able to
