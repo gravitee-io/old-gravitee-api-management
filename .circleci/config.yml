@@ -1,9 +1,9 @@
 version: 2.1
 
 orbs:
-  slack: circleci/slack@4.4
   gravitee: gravitee-io/gravitee@1.0
   secrethub: secrethub/cli@1.1
+  newman: postman/newman@0.0.2
 
 commands:
   restore-maven-cache:
@@ -16,7 +16,7 @@ commands:
 parameters:
   gio_action:
     type: enum
-    enum: [ release, standalone_release, standalone_release_replay, nexus_staging, vm_nexus_staging, pull_requests ]
+    enum: [ release, standalone_release, standalone_release_replay, nexus_staging, vm_nexus_staging, pull_requests, test ]
     default: pull_requests
   dry_run:
     type: boolean
@@ -42,6 +42,18 @@ parameters:
     type: string
     default: ""
     description: "What is the version number of the release you want to replay? (Mandatory, only for the 'standalone_release_replay' Workflow / see 'gio_action' pipeline parameter)"
+
+executors:
+  node-lts:
+    parameters:
+      class:
+        description: The resource class
+        type: enum
+        enum: [ 'small', 'medium', 'large', 'xlarge' ]
+        default: 'medium'
+    docker:
+      - image: circleci/node:14.17-stretch
+    resource_class: <<parameters.class>>
 
 jobs:
   build:
@@ -238,7 +250,45 @@ jobs:
           command: |
             RELEASE_VERSION=master python ./jenkins-scripts/src/main/python/package_bundles.py
 
+  run-postman-tests:
+    executor:
+      name: node-lts
+      class: small
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          command: |
+            echo $AZURE_DOCKER_REGISTRY_PASSWORD | docker login --username $AZURE_DOCKER_REGISTRY_USERNAME --password-stdin graviteeio.azurecr.io
+            export APIM_VERSION=nightly
+            cd ./docker/quick-setup/mongodb && docker-compose down -v && docker-compose pull && docker-compose up -d
+            cd ../../..
+            npm install newman
+            sh ./gravitee-apim-rest-api/postman/scripts/wait-for.sh localhost:8083 --timeout=30 --
+            sh ./gravitee-apim-rest-api/postman/scripts/tests.sh --postman-dir=./gravitee-apim-rest-api/postman
+
 workflows:
+  run-postman-tests:
+#    triggers:
+#      - schedule:
+#          cron: "0 3 * * *"
+#          filters:
+#            branches:
+#              only:
+#                - master
+    when:
+      equal: [ test, << pipeline.parameters.gio_action >> ]
+    jobs:
+      - run-postman-tests:
+          context: cicd-orchestrator
+          pre-steps:
+            - secrethub/env-export:
+                secret-path: graviteeio/cicd/azure/docker-registries/graviteeio/username
+                var-name: AZURE_DOCKER_REGISTRY_USERNAME
+            - secrethub/env-export:
+                secret-path: graviteeio/cicd/azure/docker-registries/graviteeio/password
+                var-name: AZURE_DOCKER_REGISTRY_PASSWORD
+
   pull_requests:
     when:
       and:
@@ -286,7 +336,6 @@ workflows:
               only:
                 - master
                 - /^\d+\.\d+\.x$/
-                - 6170-deploy-on-apim-cluster
       - deploy-on-azure-aks:
           context: cicd-orchestrator
           pre-steps:
@@ -306,7 +355,6 @@ workflows:
               only:
                 - master
                 - /^\d+\.\d+\.x$/
-                - 6170-deploy-on-apim-cluster
 
   # ---
   # The 2 Workflows Below are there for the CICD Orchestrator to be able to
