@@ -31,11 +31,7 @@
 	<name>Gravitee.io APIM - Repository - Redis</name>
 
 	<properties>
-		<lettuce.version>5.3.4.RELEASE</lettuce.version>
-		<spring-data-redis.version>2.3.4.RELEASE</spring-data-redis.version>
 		<maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
-		<commons-lang3.version>3.9</commons-lang3.version>
-		<commons-pool2.version>2.9.0</commons-pool2.version>
 	</properties>
 
 	<dependencies>
@@ -54,19 +50,24 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Lettuce -->
 		<dependency>
-			<groupId>io.lettuce</groupId>
-			<artifactId>lettuce-core</artifactId>
-			<version>${lettuce.version}</version>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-redis-client</artifactId>
+			<version>${vertx.version}</version>
 		</dependency>
 
-		<!-- Spring dependencies -->
 		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-redis</artifactId>
-			<version>${spring-data-redis.version}</version>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-core</artifactId>
+			<scope>provided</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>io.vertx</groupId>
+			<artifactId>vertx-rx-java2</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
@@ -88,17 +89,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Apache commons -->
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-			<version>${commons-lang3.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-pool2</artifactId>
-			<version>${commons-pool2.version}</version>
-		</dependency>
 		<!--  Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -181,6 +171,14 @@
 					</execution>
 				</executions>
 			</plugin>
-		</plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>9</source>
+                    <target>9</target>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 </project>
