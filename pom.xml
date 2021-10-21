@@ -235,6 +235,12 @@
                 <artifactId>gravitee-node-vertx</artifactId>
                 <version>${gravitee-node.version}</version>
             </dependency>
+            
+            <dependency>
+                <groupId>io.gravitee.node</groupId>
+                <artifactId>gravitee-node-kubernetes</artifactId>
+                <version>${gravitee-node.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>io.gravitee.notifier</groupId>
