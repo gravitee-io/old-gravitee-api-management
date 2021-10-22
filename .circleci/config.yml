@@ -53,6 +53,93 @@ executors:
 
 jobs:
 
+  secrets_resolution_cicd_dev_team:
+    docker:
+      - image: 'cimg/base:stable'
+    resource_class: medium
+    environment:
+      SECRETS_HOME: '/tmp/gravit33bot/.secrets'
+      # S3_SERVICE_SECRET: "secrethub://graviteeio/cicd/graviteebot/infra/zip-bundle-server/clever-cloud-s3/s3cmd/config"
+      S3_SERVICE_AWS_ACCESS_KEY: "secrethub://graviteeio/cicd/graviteebot/infra/zip-bundle-server/clever-cloud-s3/s3cmd/aws_access_key"
+      S3_SERVICE_AWS_SECRET_KEY: "secrethub://graviteeio/cicd/graviteebot/infra/zip-bundle-server/clever-cloud-s3/s3cmd/aws_secret_key"
+      GIO_GPG_PUB_KEY: 'secrethub://graviteeio/cicd/graviteebot/gpg/armor_format_pub_key'
+      GIO_GPG_PRV_KEY: 'secrethub://graviteeio/cicd/graviteebot/gpg/armor_format_private_key'
+      GIT_USER_NAME: 'secrethub://graviteeio/cicd/graviteebot/git/user/name'
+      GIT_USER_EMAIL: 'secrethub://graviteeio/cicd/graviteebot/git/user/email'
+      GIT_SSH_PUB_KEY: 'secrethub://graviteeio/cicd/graviteebot/git/ssh/public_key'
+      GIT_SSH_PRIVATE_KEY: 'secrethub://graviteeio/cicd/graviteebot/git/ssh/private_key'
+      ARTFACTORY_MAVEN_SETTINGS: 'secrethub://graviteeio/cicd/graviteebot/infra/maven/dry-run/artifactory/settings.apim.nightly.xml'
+      # ARTFACTORY_MAVEN_SETTINGS: 'secrethub://graviteeio/cicd/graviteebot/infra/maven/dry-run/artifactory/settings.dev.xml'
+    steps:
+      - secrethub/exec:
+          command: |
+                    mkdir -p ${SECRETS_HOME}/.gungpg
+                    echo $DRY_RELEASE_MAVEN_SETTINGS > ${SECRETS_HOME}/dry.release.settings.xml
+                    echo $NON_DRY_RELEASE_MAVEN_SETTINGS > ${SECRETS_HOME}/non.dry.release.settings.xml
+                    echo $NEXUS_STAGING_MAVEN_SETTINGS > ${SECRETS_HOME}/nexus.staging.settings.xml
+                    mkdir -p ${SECRETS_HOME}/.s3cmd
+                    # ${TEMP_S3_CMD_CONFIG}/.s3cmd/config  ${SECRETS_HOME}/.s3cmd
+                    echo $S3_SERVICE_AWS_ACCESS_KEY > ${SECRETS_HOME}/.s3cmd/aws_access_key
+                    echo $S3_SERVICE_AWS_SECRET_KEY > ${SECRETS_HOME}/.s3cmd/aws_secret_key
+                    echo $GIO_GPG_PUB_KEY > ${SECRETS_HOME}/.gungpg/graviteebot.gpg.pub.key
+                    echo $GIO_GPG_PRV_KEY > ${SECRETS_HOME}/.gungpg/graviteebot.gpg.priv.key
+                    echo $GIT_USER_NAME > ${SECRETS_HOME}/git_user_name
+                    echo $GIT_USER_EMAIL > ${SECRETS_HOME}/git_user_email
+                    echo $GIT_SSH_PUB_KEY > ${SECRETS_HOME}/git_ssh_pub_key
+                    echo $GIT_SSH_PRIVATE_KEY > ${SECRETS_HOME}/git_ssh_private_key
+                    echo $ARTFACTORY_MAVEN_SETTINGS > ${SECRETS_HOME}/.artifactory.settings.xml
+      - run:
+          name: "Re-format GPG Keys"
+          command: |
+                    # - # Re-format private and public GPG Keys
+                    export PUB_KEY_CONTENT=$(cat /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.pub.key | awk -F '-----BEGIN PGP PUBLIC KEY BLOCK-----' '{print $2}' | awk -F '-----END PGP PUBLIC KEY BLOCK-----' '{print $1}')
+                    echo '-----BEGIN PGP PUBLIC KEY BLOCK-----' > /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.pub.key
+                    echo "$PUB_KEY_CONTENT" | tr ' ' '\n' | tee -a /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.pub.key
+                    sed -i '$ s/$/-----END PGP PUBLIC KEY BLOCK-----/' /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.pub.key
+                    export PRIV_KEY_CONTENT=$(cat /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.priv.key | awk -F '-----BEGIN PGP PRIVATE KEY BLOCK-----' '{print $2}' | awk -F '-----END PGP PUBLIC KEY BLOCK-----' '{print $1}')
+                    echo '-----BEGIN PGP PRIVATE KEY BLOCK-----' > /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.priv.key
+                    echo "$PRIV_KEY_CONTENT" | tr ' ' '\n' | tee -a /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.priv.key
+                    sed -i '$ s/$/-----END PGP PRIVATE KEY BLOCK-----/' /tmp/gravit33bot/.secrets/.gungpg/graviteebot.gpg.priv.key
+      - run:
+          name: "Re-format SSH Keys used for Git config"
+          command: |
+                    echo "# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #"
+                    echo "DEBUG : content of the SSH PRIVATE KEY FILE BEFORE RE-FORMATING : "
+                    echo "# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #"
+                    cat /tmp/gravit33bot/.secrets/git_ssh_private_key
+                    echo "# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #"
+                    # - # Re-format private and public SSH Keys used for Git config
+                    # export SSH_PUB_KEY_CONTENT=$(cat /tmp/gravit33bot/.secrets/git_ssh_pub_key | awk -F '-----BEGIN RSA PRIVATE KEY-----' '{print $2}' | awk -F '-----END RSA PRIVATE KEY-----' '{print $1}')
+                    # echo '-----BEGIN RSA PRIVATE KEY-----' > /tmp/gravit33bot/.secrets/git_ssh_pub_key
+                    # echo "$SSH_PUB_KEY_CONTENT" | tr ' ' '\n' | tee -a /tmp/gravit33bot/.secrets/git_ssh_pub_key
+                    # sed -i '$ s/$/-----END RSA PRIVATE KEY-----/' /tmp/gravit33bot/.secrets/git_ssh_pub_key
+                    # -->> SSH Public Key is a one liner, so no need to re-format this buddy
+                    export SSH_PRIV_KEY_CONTENT=$(cat /tmp/gravit33bot/.secrets/git_ssh_private_key | awk -F '-----BEGIN RSA PRIVATE KEY-----' '{print $2}' | awk -F '-----END RSA PRIVATE KEY-----' '{print $1}')
+                    echo '-----BEGIN RSA PRIVATE KEY-----' > /tmp/gravit33bot/.secrets/git_ssh_private_key
+                    echo "$SSH_PRIV_KEY_CONTENT" | tr ' ' '\n' | tee -a /tmp/gravit33bot/.secrets/git_ssh_private_key
+                    sed -i '$ s/$/-----END RSA PRIVATE KEY-----/' /tmp/gravit33bot/.secrets/git_ssh_private_key
+                    echo "# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #"
+                    echo "DEBUG : content of the SSH PRIVATE KEY FILE AFTER RE-FORMATING : "
+                    echo "# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #"
+                    cat /tmp/gravit33bot/.secrets/git_ssh_private_key
+                    echo "# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #"
+                    chmod 644 /tmp/gravit33bot/.secrets/git_ssh_private_key
+                    mkdir -p ~/.ssh
+                    rm -f ~/.ssh/known_hosts
+                    touch ~/.ssh/known_hosts
+                    ssh-keygen -R github.com
+                    ssh-keyscan -H github.com >> ~/.ssh/known_hosts
+                    ssh -Ti /tmp/gravit33bot/.secrets/git_ssh_private_key git@github.com || true
+      - gravitee/generate_s3cmd_config:
+          path_to_aws_access_key_file: '/tmp/gravit33bot/.secrets/.s3cmd/aws_access_key'
+          path_to_aws_secret_key_file: '/tmp/gravit33bot/.secrets/.s3cmd/aws_secret_key'
+          path_to_generated_file: '/tmp/gravit33bot/.secrets/.s3cmd/config'
+      - persist_to_workspace:
+          root: /tmp
+          paths:
+            - gravit33bot
+
+
   delete_from_download_gravitee_io_job:
     docker:
       # - image: 'graviteeio/cicd-s3cmd:stable-latest'
@@ -271,6 +358,18 @@ jobs:
             _Notes_: The deployed app is linked to the management API of the Element Zero team's environment."
 
 workflows:
+
+  delete_from_download_gravitee_io:
+    when:
+      and:
+        - equal: [ delete_from_download_gravitee_io, << pipeline.parameters.gio_operation >> ]
+        - equal: [ dev, << pipeline.parameters.gio_saas_env >> ]
+    jobs:
+      - secrets_resolution_cicd_dev_team:
+          context: cicd-orchestrator
+      - delete_from_download_gravitee_io_job:
+          requires:
+            - secrets_resolution_cicd_dev_team
   pull_requests:
     when:
       and:
