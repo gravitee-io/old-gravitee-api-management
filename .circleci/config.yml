@@ -1,6 +1,11 @@
 version: 2.1
 
 parameters:
+
+  gio_operation:
+    type: enum
+    enum: [build_k8s_cluster, build_k8s_cluster_terraform, sedex_dev_am_update_mongo_uri, sedex_dev_apim_update_am_uri, apim_nightly_episode2, delete_from_download_gravitee_io, none]
+    default: delete_from_download_gravitee_io
   gio_action:
     type: enum
     enum: [release, standalone_release, standalone_release_replay, nexus_staging, vm_nexus_staging, pull_requests]
@@ -47,6 +52,74 @@ executors:
     resource_class: <<parameters.class>>
 
 jobs:
+
+  delete_from_download_gravitee_io_job:
+    docker:
+      # - image: 'graviteeio/cicd-s3cmd:stable-latest'
+      - image: 'cimg/base:stable'
+    resource_class: medium
+    # ---------
+    environment:
+      SECRETS_HOME: '/tmp/gravit33bot/.secrets'
+      S3_BUCKET_NAME: << pipeline.parameters.s3_bucket_name >>
+      DRY_RUN: << pipeline.parameters.dry_run >>
+      WITH_CHECKSUMS: << pipeline.parameters.with_checksums >>
+      # -- use GIO_RELEASE_VERSION only when useful to interpolate the name / path of the file to delete
+      GIO_RELEASE_VERSION: '1.0.0'
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: /tmp
+      - run:
+          name: "Check Secrets"
+          command: |
+                    ls -allh ${SECRETS_HOME}/.s3cmd/aws_access_key
+                    ls -allh ${SECRETS_HOME}/.s3cmd/aws_secret_key
+                    export S3_SERVICE_AWS_ACCESS_KEY=$(cat ${SECRETS_HOME}/.s3cmd/aws_access_key)
+                    export S3_SERVICE_AWS_SECRET_KEY=$(cat ${SECRETS_HOME}/.s3cmd/aws_secret_key)
+                    echo "export S3_SERVICE_AWS_ACCESS_KEY=${S3_SERVICE_AWS_ACCESS_KEY}" >> $BASH_ENV
+                    echo "export S3_SERVICE_AWS_SECRET_KEY=${S3_SERVICE_AWS_SECRET_KEY}" >> $BASH_ENV
+                    echo "export S3_BUCKET_NAME=${S3_BUCKET_NAME}" >> $BASH_ENV
+      - run:
+          name: "Check Executor Environment"
+          command: |
+                    echo "# ----------------------------------------------------------------- #"
+                    pwd && ls -alh && whoami
+                    echo "# ----------------------------------------------------------------- #"
+                    # s3cmd --version
+      - run:
+          name: "Check Pipeline Environment Variables"
+          command: |
+                    echo "# ----------------------------------------------------------------- #"
+                    echo "    DRY_RUN=[${DRY_RUN}]"
+                    echo "    S3_SERVICE_AWS_ACCESS_KEY=[${S3_SERVICE_AWS_ACCESS_KEY}]"
+                    echo "    S3_SERVICE_AWS_SECRET_KEY=[${S3_SERVICE_AWS_SECRET_KEY}]"
+                    echo "    S3_BUCKET_NAME=[${S3_BUCKET_NAME}]"
+                    echo "    WITH_CHECKSUMS=[${WITH_CHECKSUMS}]"
+                    echo "    GIO_RELEASE_VERSION=[${GIO_RELEASE_VERSION}]"
+                    echo "# ----------------------------------------------------------------- #"
+      - run:
+          name: "Generate [release_version_file_helper] for the next step ([d_delete_from_download_gio]) "
+          command: |
+                    echo ${GIO_RELEASE_VERSION} > /tmp/gio.release.version
+
+      # ---
+      # Will delete :
+      # => https://download.gravitee.io/graviteeio-apim/distributions/graviteeio-full-3.5.18.zip
+      # and also deletes its associated checsum files :
+      # => https://download.gravitee.io/graviteeio-apim/distributions/graviteeio-full-3.5.18.zip.md5
+      # => https://download.gravitee.io/graviteeio-apim/distributions/graviteeio-full-3.5.18.zip.sha1
+      # => https://download.gravitee.io/graviteeio-apim/distributions/graviteeio-full-3.5.18.zip.sha512sum
+      - gravitee/d_delete_from_download_gio:
+          dry_run: true
+          with_checksums: true
+          publish_folder_path: graviteeio-apim/distributions/
+          publish_zip_filename: graviteeio-full-3.11.0.zip
+          release_version_file_helper: /tmp/gio.release.version
+          s3_bucket_name: << pipeline.parameters.s3_bucket_name >>
+          placeholder: GIO_VERSION_PLACEHOLDER
+
   publish-on-artifactory-and-nexus:
     docker:
       - image: circleci/openjdk:11-jdk-stretch
