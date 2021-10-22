@@ -34,6 +34,14 @@ parameters:
     type: string
     default: ''
     description: "What is the version number of the release you want to replay? (Mandatory, only for the 'standalone_release_replay' Workflow / see 'gio_action' pipeline parameter)"
+   gio_saas_env:
+    type: enum
+    enum: [prod, staging, dev]
+    default: dev
+  with_checksums:
+    type: boolean
+    default: false
+    description: "Also delete checksum files associated ? (When you want to delete a file from https://download.gravitee.io )"
 orbs:
   gravitee: gravitee-io/gravitee@1.0
   secrethub: secrethub/cli@1.1
