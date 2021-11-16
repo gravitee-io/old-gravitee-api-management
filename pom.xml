@@ -83,7 +83,7 @@
         <flexmark.version>0.61.16</flexmark.version>
         <freemarker.version>2.3.30</freemarker.version>
         <gatling-charts-highcharts.version>3.5.1</gatling-charts-highcharts.version>
-        <gson.version>2.7</gson.version>
+        <gson.version>2.8.9</gson.version>
         <guava.version>30.1.1-jre</guava.version>
         <hamcrest.version>1.3</hamcrest.version>
         <hazelcast.version>4.1.1</hazelcast.version>
@@ -111,7 +111,7 @@
         <snakeyaml.version>1.26</snakeyaml.version>
         <swagger-annotations.version>1.6.2</swagger-annotations.version>
         <swagger-core.version>2.0.9</swagger-core.version>
-        <swagger-parser.version>2.0.24</swagger-parser.version>
+        <swagger-parser.version>2.0.28</swagger-parser.version>
         <testcontainers.version>1.15.3</testcontainers.version>
         <xmlbeans.version>3.1.0</xmlbeans.version>
         <wiremock.version>2.6.0</wiremock.version>
