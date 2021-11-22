@@ -3,7 +3,7 @@
   "baseUrl": "http://localhost:8083",
   "video": true,
   "screenshotOnRunFailure": true,
-  "integrationFolder": "cypress/e2e",
+  "integrationFolder": "cypress/tests/ui",
   "testFiles": "**/*.ts",
   "env": {
     "failOnStatusCode": false,

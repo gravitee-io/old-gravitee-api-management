@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ADMIN_USER, API_PUBLISHER_USER } from '../../fakers/users/users';
-import { ApiFakers } from '../../fakers/apis';
-import { Api, ApiDefinition, ApiLifecycleState, ApiRating, ApiRatingResponse, ApiState, ApiVisibility } from '../../model/apis';
-import { ApiAssertions } from '../../assertions/api.assertion';
-import { PortalSettings } from '../../model/portal-settings';
-import { PortalError, ManagementError, ErrorResponse } from '../../model/technical';
-import { TechnicalErrorAssertions } from '../../assertions/error.assertion';
-import { gio } from '../../commands/gravitee.commands';
+import { ADMIN_USER, API_PUBLISHER_USER } from '../../fixtures/users/users.fixtures';
+import { ApiFakers } from '../../support/utils/faker_apis';
+import { Api, ApiDefinition, ApiLifecycleState, ApiRating, ApiRatingResponse, ApiState, ApiVisibility } from '../../support/model/apis';
+import { ApiAssertions } from '../../support/assertions/api.assertion';
+import { PortalSettings } from '../../support/model/portal-settings';
+import { PortalError, ManagementError, ErrorResponse } from '../../support/model/technical';
+import { TechnicalErrorAssertions } from '../../support/assertions/error.assertion';
+import { gio } from '../../support/utils/gravitee.commands';
 
 context('API - Rating', () => {
   let createdApi: Api;

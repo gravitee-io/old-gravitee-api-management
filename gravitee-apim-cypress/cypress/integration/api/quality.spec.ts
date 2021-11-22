@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ADMIN_USER, API_PUBLISHER_USER, LOW_PERMISSION_USER } from '../../fakers/users/users';
-import { Api, ApiDefinition, ApiLifecycleState, ApiQualityRule, ApiState, ApiVisibility, ApiWorkflowState } from '../../model/apis';
-import { ManagementError } from '../../model/technical';
-import { ApiAssertions, ApiQualityMetricsAssertions } from '../../assertions/api.assertion';
-import { TechnicalErrorAssertions } from '../../assertions/error.assertion';
-import { PortalSettings } from '../../model/portal-settings';
-import { PortalSettingsAssertions } from '../../assertions/portal-settings.assertion';
-import { QualityRule } from '../../model/quality-rules';
-import { EnvironmentGroupAssertions, EnvironmentQualityRuleAssertions } from '../../assertions/environment-configuration.assertion';
-import { Group, GroupEvent } from '../../model/groups';
-import { Task, TaskQuality, TaskType, User } from '../../model/users';
-import { Member } from '../../model/members';
-import { ApiFakers } from '../../fakers/apis';
+import { ADMIN_USER, API_PUBLISHER_USER, LOW_PERMISSION_USER } from '../../fixtures/users/users.fixtures';
+import { Api, ApiDefinition, ApiLifecycleState, ApiQualityRule, ApiState, ApiVisibility, ApiWorkflowState } from '../../support/model/apis';
+import { ManagementError } from '../../support/model/technical';
+import { ApiAssertions, ApiQualityMetricsAssertions } from '../../support/assertions/api.assertion';
+import { TechnicalErrorAssertions } from '../../support/assertions/error.assertion';
+import { PortalSettings } from '../../support/model/portal-settings';
+import { PortalSettingsAssertions } from '../../support/assertions/portal-settings.assertion';
+import { QualityRule } from '../../support/model/quality-rules';
+import { EnvironmentGroupAssertions, EnvironmentQualityRuleAssertions } from '../../support/assertions/environment-configuration.assertion';
+import { Group, GroupEvent } from '../../support/model/groups';
+import { Task, TaskQuality, TaskType, User } from '../../support/model/users';
+import { Member } from '../../support/model/members';
+import { ApiFakers } from '../../support/utils/faker_apis';
 import * as faker from 'faker';
 import Response = Cypress.Response;
-import { gio } from '../../commands/gravitee.commands';
+import { gio } from '../../support/utils/gravitee.commands';
 
 context('API - Quality', () => {
   let createdQualityRule: QualityRule;
@@ -290,7 +290,7 @@ context('API - Quality', () => {
         });
     });
 
-    it('Should get quality score', () => {
+    it.skip('Should get quality score', () => {
       gio
         .management(LOW_PERMISSION_USER)
         .apisQuality()
@@ -314,7 +314,7 @@ context('API - Quality', () => {
       gio.management(LOW_PERMISSION_USER).apisQuality().addApiQualityRule(createdApi.id, qualityRule).ok();
     });
 
-    it('Should get quality score', () => {
+    it.skip('Should get quality score', () => {
       gio
         .management(LOW_PERMISSION_USER)
         .apisQuality()
@@ -381,7 +381,7 @@ context('API - Quality', () => {
       gio.management(API_PUBLISHER_USER).apisQuality().doApiReview(createdApi.id, { action: 'ASK' }).noContent();
     });
 
-    it('Should get quality score', () => {
+    it.skip('Should get quality score', () => {
       gio
         .management(LOW_PERMISSION_USER)
         .apisQuality()
@@ -478,7 +478,7 @@ context('API - Quality', () => {
         });
     });
 
-    it('Should get quality score', () => {
+    it.skip('Should get quality score', () => {
       gio
         .management(LOW_PERMISSION_USER)
         .apisQuality()
@@ -527,7 +527,7 @@ context('API - Quality', () => {
         });
     });
 
-    it('Should get quality score', () => {
+    it.skip('Should get quality score', () => {
       gio
         .management(API_PUBLISHER_USER)
         .apisQuality()

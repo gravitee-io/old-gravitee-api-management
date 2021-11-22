@@ -26,7 +26,3 @@ Cypress.Cookies.defaults({ preserve: ['Auth-Graviteeio-APIM'] });
 before(() => {
   cy.clearCookie('Auth-Graviteeio-APIM');
 });
-
-after(() => {
-  cy.clearCookie('Auth-Graviteeio-APIM');
-});

@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { ApiFakers } from '../fakers/apis';
-import { API_PUBLISHER_USER } from '../fakers/users/users';
-import { Api } from '../model/apis';
-import { gio } from '../commands/gravitee.commands';
+import { ApiFakers } from '../../support/utils/faker_apis';
+import { API_PUBLISHER_USER } from '../../fixtures/users/users.fixtures';
+import { Api } from '../../support/model/apis';
+import { gio } from '../../support/utils/gravitee.commands';
 
 const bulkSize = 50;
 
@@ -54,7 +54,7 @@ function createPublishAndStart() {
     });
 }
 
-describe('Bulk APIs', () => {
+describe.skip('Bulk APIs', () => {
   it(`should create, publish and start ${bulkSize} APIs`, () => {
     // Useful to run in parallel
     for (let i = 0; i < bulkSize; i++) {

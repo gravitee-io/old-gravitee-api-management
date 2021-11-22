@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 import { RequestInfo } from './technical';
-import { HttpClient } from '../commands/common/http.commands';
+import { HttpClient } from '../utils/common/http.commands';
 
 export abstract class HttpConnector {
   protected requestInfo: RequestInfo;
