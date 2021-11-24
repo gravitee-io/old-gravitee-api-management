@@ -17,10 +17,10 @@ You can find Gravitee.io API Management documentation from https://docs.gravitee
 
 == Building
 
-```
-$ git clone https://github.com/gravitee-io/gravitee-gateway
-$ cd gravitee-gateway
-$ mvn clean compile exec:java -Pdev -pl gravitee-gateway-standalone/gravitee-gateway-standalone-container
+[source]
+----
+$ cd gravitee-apim-gateway
+$ mvn clean compile exec:java -Pdev -pl gravitee-apim-gateway-standalone/gravitee-apim-gateway-standalone-container
 ...
 <app starts and listens on port 8082>
-```
+----
