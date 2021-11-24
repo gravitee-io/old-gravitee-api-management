@@ -29,7 +29,7 @@
   <parent>
     <groupId>io.gravitee.apim</groupId>
     <artifactId>gravitee-api-management</artifactId>
-    <version>3.5.24-SNAPSHOT</version>
+    <version>3.5.25-SNAPSHOT</version>
   </parent>
 
   <groupId>io.gravitee.apim.ui</groupId>
@@ -46,6 +46,9 @@
           <filesets>
             <fileset>
               <directory>dist</directory>
+            </fileset>
+            <fileset>
+              <directory>dist-tsc</directory>
             </fileset>
             <fileset>
               <directory>.tmp</directory>
@@ -84,11 +87,14 @@
             <exclude>.tmp/**</exclude>
             <exclude>.vscode/**</exclude>
             <exclude>dist/**</exclude>
+            <exclude>dist-tsc/**</exclude>
             <exclude>.*</exclude>
             <exclude>.*/**</exclude>
             <exclude>**/*.adoc</exclude>
             <exclude>node_modules/**</exclude>
             <exclude>node/**</exclude>
+            <exclude>LICENSE_TEMPLATE.txt</exclude>
+            <exclude>sonar-project.properties</exclude>
           </excludes>
         </configuration>
       </plugin>
@@ -113,6 +119,7 @@
             <configuration>
               <nodeVersion>${node.version}</nodeVersion>
               <npmVersion>${npm.version}</npmVersion>
+              <skip>${skip.npm}</skip>
             </configuration>
           </execution>
           <execution>
@@ -159,6 +166,10 @@
         <artifactId>maven-assembly-plugin</artifactId>
         <executions>
           <execution>
+            <id>make-plugin-assembly</id>
+            <phase>none</phase>
+          </execution>
+          <execution>
             <phase>package</phase>
             <goals>
               <goal>single</goal>
@@ -168,6 +179,7 @@
               <descriptors>
                 <descriptor>assembly.xml</descriptor>
               </descriptors>
+              <skipAssembly>${skip.npm}</skipAssembly>
             </configuration>
           </execution>
         </executions>
