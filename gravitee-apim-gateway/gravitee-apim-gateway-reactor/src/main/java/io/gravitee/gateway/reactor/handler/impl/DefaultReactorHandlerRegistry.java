@@ -18,14 +18,13 @@ package io.gravitee.gateway.reactor.handler.impl;
 import io.gravitee.gateway.api.Request;
 import io.gravitee.gateway.reactor.Reactable;
 import io.gravitee.gateway.reactor.handler.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
@@ -59,38 +58,44 @@ public class DefaultReactorHandlerRegistry implements ReactorHandlerRegistry {
         handlers.put(handler.reactable(), handler);
 
         // Associate the handler to the entrypoints
-        List<HandlerEntrypoint> reactableEntrypoints = handler.reactable()
-            .entrypoints().stream().map(new Function<Entrypoint, HandlerEntrypoint>() {
-                @Override
-                public HandlerEntrypoint apply(Entrypoint entrypoint) {
-                    return new HandlerEntrypoint() {
-                        @Override
-                        public ReactorHandler target() {
-                            return handler;
-                        }
+        List<HandlerEntrypoint> reactableEntrypoints = handler
+            .reactable()
+            .entrypoints()
+            .stream()
+            .map(
+                new Function<Entrypoint, HandlerEntrypoint>() {
+                    @Override
+                    public HandlerEntrypoint apply(Entrypoint entrypoint) {
+                        return new HandlerEntrypoint() {
+                            @Override
+                            public ReactorHandler target() {
+                                return handler;
+                            }
 
-                        @Override
-                        public String path() {
-                            return entrypoint.path();
-                        }
+                            @Override
+                            public String path() {
+                                return entrypoint.path();
+                            }
 
-                        @Override
-                        public String host() {
-                            return entrypoint.host();
-                        }
+                            @Override
+                            public String host() {
+                                return entrypoint.host();
+                            }
 
-                        @Override
-                        public int priority() {
-                            return entrypoint.priority();
-                        }
+                            @Override
+                            public int priority() {
+                                return entrypoint.priority();
+                            }
 
-                        @Override
-                        public boolean accept(Request request) {
-                            return entrypoint.accept(request);
-                        }
-                    };
+                            @Override
+                            public boolean accept(Request request) {
+                                return entrypoint.accept(request);
+                            }
+                        };
+                    }
                 }
-            }).collect(Collectors.toList());
+            )
+            .collect(Collectors.toList());
 
         entrypointByReactable.put(handler.reactable(), reactableEntrypoints);
         addEntrypoints(reactableEntrypoints);
@@ -197,5 +202,4 @@ public class DefaultReactorHandlerRegistry implements ReactorHandlerRegistry {
             registeredEntrypoints.sort(entryPointComparator);
         }
     }
-
 }
