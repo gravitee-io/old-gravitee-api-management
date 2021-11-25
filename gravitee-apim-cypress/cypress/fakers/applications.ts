@@ -13,22 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import * as faker from 'faker';
+import { Application } from '@model/applications';
 
-import './common/tools.commands';
-import './common/http.commands';
-import './common/ui.commands';
-import './api-commands';
-import './application-commands';
-
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-require('cypress-terminal-report/src/installLogsCollector')({ enableExtendedCollector: Cypress.env('printLogsToConsole') === 'always' });
-
-// Cypress.Cookies.defaults({ preserve: ['Auth-Graviteeio-APIM'] });
-// before(() => {
-//   cy.clearCookie('Auth-Graviteeio-APIM');
-// });
-
-// after(() => {
-//   cy.clearCookie('Auth-Graviteeio-APIM');
-// });
+export class ApplicationFakers {
+  static application(attributes?: Partial<Application>): Application {
+    return <Application>{
+      ...attributes,
+      name: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+    };
+  }
+}
