@@ -85,7 +85,7 @@ public class CategoriesResourceTest extends AbstractResourceTest {
         final Response response = target().request().get();
         assertEquals(HttpStatusCode.OK_200, response.getStatus());
 
-        Mockito.verify(apiService).findPublishedByUser(any());
+        Mockito.verify(apiService).countPublishedByUserGroupedByCategories(any());
         CategoriesResponse categoriesResponse = response.readEntity(CategoriesResponse.class);
         assertEquals(2, categoriesResponse.getData().size());
     }
@@ -138,7 +138,7 @@ public class CategoriesResourceTest extends AbstractResourceTest {
         final Response response = target().request().get();
         assertEquals(HttpStatusCode.OK_200, response.getStatus());
 
-        Mockito.verify(apiService).findPublishedByUser(any());
+        Mockito.verify(apiService).countPublishedByUserGroupedByCategories(any());
 
         CategoriesResponse categoriesResponse = response.readEntity(CategoriesResponse.class);
 
