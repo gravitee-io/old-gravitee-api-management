@@ -642,7 +642,7 @@ workflows:
                   requires:
                       - build
             - sonarcloud-analysis:
-                  name: Sonarcloud - REST API
+                  name: Sonar - << matrix.working_directory >>
                   matrix:
                       parameters:
                           working_directory:
@@ -760,7 +760,7 @@ workflows:
                   requires:
                       - portal-webui-install
             - sonarcloud-analysis:
-                  name: Sonarcloud - Frontend Analysis
+                  name: Sonar - << matrix.working_directory >>
                   matrix:
                       parameters:
                           working_directory:
