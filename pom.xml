@@ -117,7 +117,7 @@
         <powermock.version>2.0.9</powermock.version>
         <protobuf-java.version>3.17.3</protobuf-java.version>
         <reactor-adapter.version>3.4.3</reactor-adapter.version>
-        <snakeyaml.version>1.26</snakeyaml.version>
+        <snakeyaml.version>1.29</snakeyaml.version>
         <swagger-annotations.version>1.6.2</swagger-annotations.version>
         <swagger-core.version>2.0.9</swagger-core.version>
         <swagger-parser.version>2.0.24</swagger-parser.version>
