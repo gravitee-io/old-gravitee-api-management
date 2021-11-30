@@ -88,11 +88,22 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
     private AlertEventProducer alertEventProducer;
     private Node node;
 
-    public EndpointRuleHandler(Vertx vertx, EndpointRule<T> rule) {
+    private final HttpClient httpClient;
+
+    public EndpointRuleHandler(Vertx vertx, EndpointRule<T> rule) throws Exception{
         this.vertx = vertx;
         this.rule = rule;
 
         endpointStatus = new EndpointStatusDecorator(rule.endpoint());
+
+        if (! rule.steps().isEmpty()) {
+            // For now, we only allow one step per rule.
+            URI uri = createRequest(rule.endpoint(), rule.steps().get(0));
+
+            httpClient = createHttpClient(rule.endpoint(), uri);
+        } else {
+            httpClient = null;
+        }
     }
 
     @Override
@@ -106,10 +117,10 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
         }
     }
 
-    protected abstract HttpClientOptions createHttpClientOptions(final URI requestUri) throws Exception;
+    protected abstract HttpClientOptions createHttpClientOptions(final T endpoint, final URI requestUri) throws Exception;
 
-    protected HttpClient createHttpClient(final URI requestUri) throws Exception {
-        HttpClientOptions options = createHttpClientOptions(requestUri);
+    protected HttpClient createHttpClient(final T endpoint, final URI requestUri) throws Exception {
+        HttpClientOptions options = createHttpClientOptions(endpoint, requestUri);
 
         return vertx.createHttpClient(options);
     }
@@ -171,7 +182,6 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
             try {
                 URI hcRequestUri = createRequest(endpoint, step);
 
-                HttpClient httpClient = createHttpClient(hcRequestUri);
                 HttpClientRequest healthRequest = createHttpClientRequest(httpClient, hcRequestUri, step);
 
                 final EndpointStatus.Builder healthBuilder = EndpointStatus
@@ -224,14 +234,9 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
                         healthBuilder.step(stepBuilder.build());
 
                         report(healthBuilder.build());
-
-                        // Close client
-                        httpClient.close();
                     });
                     response.exceptionHandler(throwable -> {
                         logger.error("An error has occurred during Health check response handler", throwable);
-                        // Close client
-                        httpClient.close();
                     });
                 });
 
@@ -269,13 +274,6 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
                     healthBuilder.step(result);
 
                     report(healthBuilder.build());
-
-                    try {
-                        // Close client
-                        httpClient.close();
-                    } catch (IllegalStateException ise) {
-                        // Do not take care about exception when closing client
-                    }
                 });
 
                 // Send request
@@ -368,5 +366,11 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
 
     public void setNode(Node node) {
         this.node = node;
+    }
+
+    public void close() {
+        if (httpClient != null) {
+            httpClient.close();
+        }
     }
 }

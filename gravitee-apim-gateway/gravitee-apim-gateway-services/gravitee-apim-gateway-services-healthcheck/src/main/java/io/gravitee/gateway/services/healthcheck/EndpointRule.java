@@ -40,5 +40,5 @@ public interface EndpointRule<T extends Endpoint> {
 
     ProxyOptions getSystemProxyOptions();
 
-    EndpointRuleHandler<T> createRunner(Vertx vertx, EndpointRule<T> rule);
+    EndpointRuleHandler<T> createRunner(Vertx vertx, EndpointRule<T> rule) throws Exception;
 }

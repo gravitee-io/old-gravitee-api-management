@@ -55,12 +55,12 @@ public class ManagedEndpointRuleHandlerTest {
     private Vertx vertx;
 
     @Before
-    public void before(TestContext context) {
+    public void before() {
         vertx = Vertx.vertx();
     }
 
     @Test
-    public void shouldNotValidate_invalidEndpoint(TestContext context) {
+    public void shouldNotValidate_invalidEndpoint(TestContext context) throws Exception {
         // Prepare HTTP endpoint
         stubFor(get(urlEqualTo("/"))
                 .willReturn(notFound()));
@@ -101,7 +101,7 @@ public class ManagedEndpointRuleHandlerTest {
     }
 
     @Test
-    public void shouldValidate(TestContext context) throws InterruptedException {
+    public void shouldValidate(TestContext context) throws Exception {
         // Prepare HTTP endpoint
         stubFor(get(urlEqualTo("/"))
                 .willReturn(ok("{\"status\": \"green\"}")));
@@ -143,7 +143,7 @@ public class ManagedEndpointRuleHandlerTest {
     }
 
     @Test
-    public void shouldNotValidate_invalidResponseBody(TestContext context) throws InterruptedException {
+    public void shouldNotValidate_invalidResponseBody(TestContext context) throws Exception {
         // Prepare HTTP endpoint
         stubFor(get(urlEqualTo("/"))
                 .willReturn(ok("{\"status\": \"yellow\"}")));
@@ -191,7 +191,7 @@ public class ManagedEndpointRuleHandlerTest {
     }
 
     @Test
-    public void shouldValidateFromRoot(TestContext context) throws InterruptedException {
+    public void shouldValidateFromRoot(TestContext context) throws Exception {
         // Prepare HTTP endpoint
         stubFor(get(urlEqualTo("/"))
                 .willReturn(ok()));

@@ -36,7 +36,7 @@ public class GrpcEndpointRuleHandler extends HttpEndpointRuleHandler<GrpcEndpoin
 
     private static final String GRPC_TRAILERS_TE = "trailers";
 
-    GrpcEndpointRuleHandler(Vertx vertx, EndpointRule<GrpcEndpoint> rule) {
+    GrpcEndpointRuleHandler(Vertx vertx, EndpointRule<GrpcEndpoint> rule) throws Exception {
         super(vertx, rule);
     }
 
@@ -55,8 +55,8 @@ public class GrpcEndpointRuleHandler extends HttpEndpointRuleHandler<GrpcEndpoin
     }
 
     @Override
-    protected HttpClientOptions createHttpClientOptions(final URI requestUri) throws Exception {
-        HttpClientOptions httpClientOptions = super.createHttpClientOptions(requestUri);
+    protected HttpClientOptions createHttpClientOptions(final GrpcEndpoint endpoint, final URI requestUri) throws Exception {
+        HttpClientOptions httpClientOptions = super.createHttpClientOptions(endpoint, requestUri);
 
         // Force HTTP_2 and disable Upgrade
         httpClientOptions.setProtocolVersion(HttpVersion.HTTP_2)

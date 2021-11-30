@@ -50,7 +50,7 @@ public class HttpEndpointRuleHandler<T extends HttpEndpoint> extends EndpointRul
     private final HttpEndpoint endpoint;
     private final ProxyOptions systemProxyOptions;
 
-    public HttpEndpointRuleHandler(Vertx vertx, EndpointRule<T> rule) {
+    public HttpEndpointRuleHandler(Vertx vertx, EndpointRule<T> rule) throws Exception {
         super(vertx, rule);
 
         this.endpoint = rule.endpoint();
@@ -70,7 +70,7 @@ public class HttpEndpointRuleHandler<T extends HttpEndpoint> extends EndpointRul
     }
 
     @Override
-    protected HttpClientOptions createHttpClientOptions(final URI requestUri) throws Exception {
+    protected HttpClientOptions createHttpClientOptions(final HttpEndpoint endpoint, final URI requestUri) throws Exception {
         // Prepare HTTP client
         HttpClientOptions httpClientOptions = new HttpClientOptions()
                 .setMaxPoolSize(1)

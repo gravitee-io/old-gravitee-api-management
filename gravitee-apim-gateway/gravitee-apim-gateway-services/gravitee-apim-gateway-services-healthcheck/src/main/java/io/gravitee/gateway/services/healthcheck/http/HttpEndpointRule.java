@@ -34,7 +34,7 @@ public class HttpEndpointRule extends AbstractEndpointRule<HttpEndpoint> {
     }
 
     @Override
-    public EndpointRuleHandler<HttpEndpoint> createRunner(Vertx vertx, EndpointRule<HttpEndpoint> rule) {
+    public EndpointRuleHandler<HttpEndpoint> createRunner(Vertx vertx, EndpointRule<HttpEndpoint> rule) throws Exception {
         return new HttpEndpointRuleHandler<>(vertx, rule);
     }
 }

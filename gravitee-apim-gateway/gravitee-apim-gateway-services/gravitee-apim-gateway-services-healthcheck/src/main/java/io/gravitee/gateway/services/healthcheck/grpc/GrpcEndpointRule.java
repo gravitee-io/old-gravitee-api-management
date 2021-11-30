@@ -34,7 +34,7 @@ public class GrpcEndpointRule extends AbstractEndpointRule<GrpcEndpoint> {
     }
 
     @Override
-    public EndpointRuleHandler<GrpcEndpoint> createRunner(Vertx vertx, EndpointRule<GrpcEndpoint> rule) {
+    public EndpointRuleHandler<GrpcEndpoint> createRunner(Vertx vertx, EndpointRule<GrpcEndpoint> rule) throws Exception {
         return new GrpcEndpointRuleHandler(vertx, rule);
     }
 }
