@@ -18,6 +18,7 @@ package io.gravitee.gateway.services.healthcheck.grpc;
 import io.gravitee.common.http.HttpHeaders;
 import io.gravitee.common.http.MediaType;
 import io.gravitee.definition.model.endpoint.GrpcEndpoint;
+import io.gravitee.definition.model.endpoint.HttpEndpoint;
 import io.gravitee.gateway.services.healthcheck.EndpointRule;
 import io.gravitee.gateway.services.healthcheck.http.HttpEndpointRuleHandler;
 import io.vertx.core.Vertx;
@@ -56,7 +57,7 @@ public class GrpcEndpointRuleHandler extends HttpEndpointRuleHandler<GrpcEndpoin
 
     @Override
     protected HttpClientOptions createHttpClientOptions(final GrpcEndpoint endpoint, final URI requestUri) throws Exception {
-        HttpClientOptions httpClientOptions = super.createHttpClientOptions(endpoint, requestUri);
+        HttpClientOptions httpClientOptions = super.createHttpClientOptions((HttpEndpoint) endpoint, requestUri);
 
         // Force HTTP_2 and disable Upgrade
         httpClientOptions.setProtocolVersion(HttpVersion.HTTP_2)

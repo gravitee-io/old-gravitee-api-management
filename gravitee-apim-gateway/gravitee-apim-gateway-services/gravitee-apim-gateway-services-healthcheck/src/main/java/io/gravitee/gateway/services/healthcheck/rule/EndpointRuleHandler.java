@@ -100,7 +100,9 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
             // For now, we only allow one step per rule.
             URI uri = createRequest(rule.endpoint(), rule.steps().get(0));
 
-            httpClient = createHttpClient(rule.endpoint(), uri);
+            HttpClientOptions clientOptions = createHttpClientOptions(rule.endpoint(), uri);
+            httpClient = vertx.createHttpClient(clientOptions);
+
         } else {
             httpClient = null;
         }
@@ -118,12 +120,6 @@ public abstract class EndpointRuleHandler<T extends Endpoint> implements Handler
     }
 
     protected abstract HttpClientOptions createHttpClientOptions(final T endpoint, final URI requestUri) throws Exception;
-
-    protected HttpClient createHttpClient(final T endpoint, final URI requestUri) throws Exception {
-        HttpClientOptions options = createHttpClientOptions(endpoint, requestUri);
-
-        return vertx.createHttpClient(options);
-    }
 
     protected HttpClientRequest createHttpClientRequest(final HttpClient httpClient, URI request, io.gravitee.definition.model.services.healthcheck.Step step) throws Exception {
         final int port = request.getPort() != -1 ? request.getPort() :
