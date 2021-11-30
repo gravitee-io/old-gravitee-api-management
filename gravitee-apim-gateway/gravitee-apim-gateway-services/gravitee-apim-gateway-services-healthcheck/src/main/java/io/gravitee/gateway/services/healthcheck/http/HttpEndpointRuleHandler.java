@@ -47,13 +47,11 @@ public class HttpEndpointRuleHandler<T extends HttpEndpoint> extends EndpointRul
     private static final String WSS_SCHEME = "wss";
     private static final String GRPCS_SCHEME = "grpcs";
 
-    private final HttpEndpoint endpoint;
     private final ProxyOptions systemProxyOptions;
 
     public HttpEndpointRuleHandler(Vertx vertx, EndpointRule<T> rule) throws Exception {
         super(vertx, rule);
 
-        this.endpoint = rule.endpoint();
         this.systemProxyOptions = rule.getSystemProxyOptions();
     }
 
@@ -73,12 +71,13 @@ public class HttpEndpointRuleHandler<T extends HttpEndpoint> extends EndpointRul
     protected HttpClientOptions createHttpClientOptions(final HttpEndpoint endpoint, final URI requestUri) throws Exception {
         // Prepare HTTP client
         HttpClientOptions httpClientOptions = new HttpClientOptions()
-                .setMaxPoolSize(1)
-                .setKeepAlive(false)
-                .setTcpKeepAlive(false);
+                .setMaxPoolSize(1);
 
         if (endpoint.getHttpClientOptions() != null) {
             httpClientOptions
+                    .setSslEngineOptions(new OpenSSLEngineOptions())
+                    .setKeepAlive(endpoint.getHttpClientOptions().isKeepAlive())
+                    .setTcpKeepAlive(endpoint.getHttpClientOptions().isKeepAlive())
                     .setIdleTimeout((int) (endpoint.getHttpClientOptions().getIdleTimeout() / 1000))
                     .setConnectTimeout((int) endpoint.getHttpClientOptions().getConnectTimeout())
                     .setTryUseCompression(endpoint.getHttpClientOptions().isUseCompression());

@@ -29,6 +29,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author David BRASSELY (david.brassely at graviteesource.com)
  * @author GraviteeSource Team
@@ -67,7 +69,7 @@ public abstract class AbstractRepository implements InitializingBean {
     <T> T blockingGet(Future<T> future) throws TechnicalException {
         VertxCompletableFuture<T> completable = VertxCompletableFuture.from(vertx, future);
         try {
-            return completable.get();
+            return completable.get(10, TimeUnit.SECONDS);
         } catch (Exception ex) {
             logger.error("Unexpected error while invoking bridge: {}", ex.getMessage());
             throw new TechnicalException(ex);
