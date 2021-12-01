@@ -21,8 +21,6 @@ import io.gravitee.repository.management.api.SubscriptionRepository;
 import io.gravitee.repository.management.api.search.SubscriptionCriteria;
 import io.gravitee.repository.management.model.Subscription;
 import io.gravitee.resource.cache.api.Cache;
-import io.gravitee.resource.cache.api.Element;
-import java.util.Map;
 import java.util.concurrent.Callable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,12 +52,12 @@ public abstract class SubscriptionRefresher implements Callable<Result<Boolean>>
     private void saveOrUpdate(Subscription subscription) {
         String key = subscription.getApi() + '-' + subscription.getClientId();
 
-        Element<String, Object> element = cache.get(subscription.getId());
+        Object element = cache.get(subscription.getId());
 
         if ((CLOSED.equals(subscription.getStatus()) || PAUSED.equals(subscription.getStatus())) && element != null) {
             cache.evict(subscription.getId());
-            String oldKey = (String) element.getValue();
-            Subscription eltSubscription = cache.get(oldKey) != null ? ((Subscription) cache.get(oldKey).getValue()) : null;
+            String oldKey = (String) element;
+            Subscription eltSubscription = (Subscription) cache.get(oldKey);
             if (eltSubscription != null && eltSubscription.getId().equals(subscription.getId())) {
                 cache.evict(oldKey);
             }
@@ -70,7 +68,7 @@ public abstract class SubscriptionRefresher implements Callable<Result<Boolean>>
                 subscription.getApplication(),
                 subscription.getClientId()
             );
-            cache.put(new Element<>((subscription.getId()), key));
+            cache.put(subscription.getId(), key);
 
             // Delete useless information to preserve memory
             subscription.setGeneralConditionsContentPageId(null);
@@ -79,10 +77,10 @@ public abstract class SubscriptionRefresher implements Callable<Result<Boolean>>
             subscription.setSubscribedBy(null);
             subscription.setProcessedBy(null);
 
-            cache.put(new Element<>(key, subscription));
+            cache.put(key, subscription);
 
             if (element != null) {
-                final String oldKey = (String) element.getValue();
+                final String oldKey = (String) element;
                 if (!oldKey.equals(key)) {
                     cache.evict(oldKey);
                 }

@@ -22,7 +22,6 @@ import io.gravitee.repository.management.api.search.Pageable;
 import io.gravitee.repository.management.api.search.SubscriptionCriteria;
 import io.gravitee.repository.management.model.Subscription;
 import io.gravitee.resource.cache.api.Cache;
-import io.gravitee.resource.cache.api.Element;
 import java.util.*;
 
 /**
@@ -72,8 +71,7 @@ public class SubscriptionRepositoryWrapper implements SubscriptionRepository {
             return this.wrapped.search(criteria);
         } else {
             String key = criteria.getApis().iterator().next() + '-' + criteria.getClientId();
-            Element<String, Subscription> subscriptionElement = this.cache.get(key);
-            Subscription subscription = subscriptionElement != null ? subscriptionElement.getValue() : null;
+            Subscription subscription = this.cache.get(key);
             return (subscription != null) ? Collections.singletonList(subscription) : null;
         }
     }

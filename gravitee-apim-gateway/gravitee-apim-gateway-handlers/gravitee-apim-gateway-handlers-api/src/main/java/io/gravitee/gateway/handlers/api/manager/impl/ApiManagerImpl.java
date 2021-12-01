@@ -182,7 +182,7 @@ public class ApiManagerImpl implements CacheListener<String, Api>, ApiManager, I
                     logger.debug("\t- {}", plan.getName());
                 }
 
-                apis.put(new Element<>(api.getId(), api));
+                apis.put(api.getId(), api);
                 eventManager.publishEvent(ReactorEvent.DEPLOY, api);
                 logger.info("{} has been deployed", api);
             } else {
@@ -245,7 +245,7 @@ public class ApiManagerImpl implements CacheListener<String, Api>, ApiManager, I
                 logger.info("\t- {}", plan.getName());
             }
 
-            apis.put(new Element<>(api.getId(), api));
+            apis.put(api.getId(), api);
             eventManager.publishEvent(ReactorEvent.UPDATE, api);
             logger.info("{} has been updated", api);
         } else {
@@ -291,8 +291,7 @@ public class ApiManagerImpl implements CacheListener<String, Api>, ApiManager, I
 
     @Override
     public Api get(String name) {
-        Element<String, Api> element = apis.get(name);
-        return element == null ? null : element.getValue();
+        return apis.get(name);
     }
 
     public void setEventManager(EventManager eventManager) {

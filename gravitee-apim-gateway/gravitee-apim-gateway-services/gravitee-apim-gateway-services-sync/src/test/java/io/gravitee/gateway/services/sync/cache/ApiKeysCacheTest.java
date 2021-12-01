@@ -18,9 +18,7 @@ package io.gravitee.gateway.services.sync.cache;
 import static org.junit.Assert.*;
 
 import io.gravitee.repository.management.model.ApiKey;
-import io.gravitee.resource.cache.api.Element;
 import io.gravitee.resource.cache.standalone.StandaloneCache;
-import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,9 +41,9 @@ public class ApiKeysCacheTest {
 
     @Before
     public void initInternalCache() {
-        apiKeysCache.cache.put(new Element<>("another-apiId.another-key", cachedApiKey1));
-        apiKeysCache.cache.put(new Element<>("api-id.key-id", cachedApiKey2));
-        apiKeysCache.cache.put(new Element<>("another-apiId2.another-key", cachedApiKey3));
+        apiKeysCache.cache.put("another-apiId.another-key", cachedApiKey1);
+        apiKeysCache.cache.put("api-id.key-id", cachedApiKey2);
+        apiKeysCache.cache.put("another-apiId2.another-key", cachedApiKey3);
     }
 
     @Test
@@ -70,7 +68,7 @@ public class ApiKeysCacheTest {
 
         apiKeysCache.put(apiKey);
 
-        assertSame(apiKey, apiKeysCache.cache.get("api-id6.key-id").getValue());
+        assertSame(apiKey, apiKeysCache.cache.get("api-id6.key-id"));
     }
 
     @Test
