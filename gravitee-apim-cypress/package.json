@@ -26,7 +26,7 @@
         "cypress-terminal-report": "3.4.0",
         "har-validator": "5.1.5",
         "license-check-and-add": "4.0.3",
-        "prettier": "2.4.1",
+        "prettier": "2.5.0",
         "typescript": "4.5.2"
     },
     "dependencies": {
