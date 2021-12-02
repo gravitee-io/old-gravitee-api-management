@@ -110,7 +110,7 @@ function applicationsNotificationsRouterConfig($stateProvider) {
           page: 'management-alerts',
         },
         perms: {
-          only: ['environment-alert-u'],
+          only: ['environment-alert-r'],
         },
       },
       resolve: {

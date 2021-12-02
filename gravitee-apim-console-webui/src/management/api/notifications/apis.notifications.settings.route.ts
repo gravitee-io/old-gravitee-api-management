@@ -119,7 +119,7 @@ function apisNotificationsRouterConfig($stateProvider) {
           page: 'management-alerts',
         },
         perms: {
-          only: ['api-alert-u'],
+          only: ['api-alert-r'],
         },
       },
       resolve: {

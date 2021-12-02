@@ -145,6 +145,12 @@
             <artifactId>jul-to-slf4j</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.graviteesource.license</groupId>
+            <artifactId>gravitee-license-node</artifactId>
+            <version>1.2.1</version>
+        </dependency>
+
         <!-- Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
