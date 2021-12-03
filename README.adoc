@@ -1,10 +1,13 @@
+# ⚠️ DEPRECATED
 
-= Gravitee.io API Management
+This repository is no longer active, all the sources have been moved to Gravitee.io API Management https://github.com/gravitee-io/gravitee-api-management[repository].
+
+
+
+
+== Gravitee.io API Management
 
 image:https://img.shields.io/badge/License-Apache%202.0-blue.svg["License", link="https://github.com/gravitee-io/gravitee-api-management/blob/master/LICENSE"]
-image:https://circleci.com/gh/gravitee-io/gravitee-api-management.svg?style=svg["CircleCI", link="https://circleci.com/gh/gravitee-io/gravitee-api-management"]
-
-image:./assets/gravitee-logo-cyan.svg["Gravitee.io",400]
 
 == Overview
 
